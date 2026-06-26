@@ -1,0 +1,349 @@
+/* ============================================================
+   BESTS LEAGUE — componentes reutilizáveis
+   (cards, tabelas, pills, botões, estrelas, toast)
+   ============================================================ */
+
+/* GRID & CARDS */
+.bl-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.bl-card-wide { grid-column: 1 / -1; }
+.bl-card {
+  background: var(--bl-bg-card);
+  border: 1px solid var(--bl-line);
+  border-radius: 8px;
+  padding: 18px 20px;
+}
+.bl-card-title {
+  font-family: 'Oswald', sans-serif;
+  font-size: 13.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--bl-text-dim);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 16px;
+}
+
+.bl-destaque-jogador { display: flex; align-items: center; gap: 14px; }
+.bl-destaque-nome { font-family: 'Oswald', sans-serif; font-size: 19px; font-weight: 600; margin: 0; letter-spacing: 0.01em; }
+.bl-destaque-valor { font-size: 13px; color: var(--bl-gold-light); margin: 2px 0 0; font-weight: 600; }
+.bl-trofeu-icon {
+  width: 36px; height: 36px;
+  background: rgba(212,175,55,0.15);
+  color: var(--bl-gold-light);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
+.bl-mini-jogos { display: flex; flex-direction: column; gap: 2px; }
+.bl-mini-jogo {
+  display: flex; align-items: center; gap: 14px;
+  padding: 10px 8px;
+  background: none; border: none;
+  border-bottom: 1px solid var(--bl-line);
+  color: var(--bl-text);
+  cursor: pointer; text-align: left;
+  font-family: inherit; width: 100%;
+}
+.bl-mini-jogo:last-child { border-bottom: none; }
+.bl-mini-jogo:hover { background: rgba(255,255,255,0.03); }
+.bl-mini-jogo-data { font-size: 12px; color: var(--bl-text-dim); width: 76px; flex-shrink: 0; }
+.bl-mini-jogo-placar { font-family: 'Oswald', sans-serif; font-size: 16px; display: flex; align-items: center; gap: 8px; font-variant-numeric: tabular-nums; }
+.bl-mini-x { color: var(--bl-text-faint); font-size: 12px; }
+.bl-mini-jogo-craque { margin-left: auto; font-size: 11.5px; color: var(--bl-gold-light); display: flex; align-items: center; gap: 4px; }
+
+/* TABELAS */
+.bl-table-wrap { overflow-x: auto; }
+.bl-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.bl-table th {
+  text-align: left;
+  font-family: 'Oswald', sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--bl-text-faint);
+  font-weight: 600;
+  padding: 0 10px 10px;
+  border-bottom: 1px solid var(--bl-line-strong);
+  white-space: nowrap;
+}
+.bl-table td { padding: 10px; border-bottom: 1px solid var(--bl-line); vertical-align: middle; }
+.bl-table tbody tr:last-child td { border-bottom: none; }
+.bl-table tbody tr:hover { background: rgba(255,255,255,0.025); }
+.bl-row-lider { background: rgba(212,175,55,0.07); }
+.bl-row-lider:hover { background: rgba(212,175,55,0.1) !important; }
+.bl-td-rank { font-family: 'Oswald', sans-serif; color: var(--bl-text-faint); font-size: 13px; }
+.bl-td-nome { font-weight: 600; }
+.bl-td-gols { text-align: right; font-family: 'Oswald', sans-serif; font-size: 16px; font-variant-numeric: tabular-nums; color: var(--bl-gold-light); }
+.bl-td-muted { color: var(--bl-text-faint); font-size: 12.5px; }
+.bl-td-placar { text-align: center; font-family: 'Oswald', sans-serif; font-size: 17px; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.bl-td-x { color: var(--bl-text-faint); margin: 0 4px; font-size: 13px; }
+.bl-td-time { font-family: 'Oswald', sans-serif; font-size: 11px; letter-spacing: 0.06em; font-weight: 600; padding-left: 14px !important; position: relative; }
+.bl-td-time::before { content: ''; position: absolute; left: 0; top: 8px; bottom: 8px; width: 3px; }
+.bl-td-timeA { color: var(--bl-timeA); }
+.bl-td-timeA::before { background: var(--bl-timeA); }
+.bl-td-timeB { color: #cfcfcf; }
+.bl-td-timeB::before { background: #cfcfcf; }
+.bl-td-cartao-num { text-align: center; font-family: 'Oswald', sans-serif; font-size: 15px; color: var(--bl-amarelo); }
+.bl-td-cartao-vermelho { color: var(--bl-red); }
+.bl-craque-tag { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; color: var(--bl-gold-light); font-weight: 600; }
+.bl-row-actions { display: flex; gap: 4px; justify-content: flex-end; }
+
+/* PILLS */
+.bl-pills { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 18px; min-height: 4px; }
+.bl-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px;
+  padding: 5px 9px 5px 11px;
+  border-radius: 100px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--bl-line-strong);
+  color: var(--bl-text);
+}
+.bl-pill-timeA { border-left: 3px solid var(--bl-timeA); }
+.bl-pill-timeB { border-left: 3px solid #cfcfcf; }
+.bl-pill-avulso { border-left: 3px solid var(--bl-azul-claro); }
+.bl-pill-neutro { border-left: 3px solid var(--bl-line-strong); }
+.bl-pill-x { background: none; border: none; color: var(--bl-text-faint); display: flex; align-items: center; cursor: pointer; padding: 2px; }
+.bl-pill-x:hover { color: var(--bl-text); }
+.bl-cartao-pill-amarelo { color: var(--bl-amarelo); border-left: 3px solid var(--bl-amarelo); }
+.bl-cartao-pill-vermelho { color: var(--bl-red); border-left: 3px solid var(--bl-red); }
+
+/* EMPTY STATE */
+.bl-empty { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 40px 20px; color: var(--bl-text-faint); text-align: center; }
+.bl-empty-title { font-size: 14px; font-weight: 600; color: var(--bl-text-dim); margin: 4px 0 0; }
+.bl-empty-subtitle { font-size: 12.5px; margin: 0; }
+
+/* BOTÕES */
+.bl-btn-primary, .bl-btn-secondary, .bl-btn-danger {
+  font-family: 'Oswald', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  padding: 10px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid transparent;
+  transition: filter 0.12s ease, transform 0.05s ease;
+  text-transform: uppercase;
+}
+.bl-btn-primary { background: linear-gradient(135deg, var(--bl-gold-light), var(--bl-gold)); color: #1a1305; }
+.bl-btn-primary:hover { filter: brightness(1.08); }
+.bl-btn-primary:active { transform: scale(0.98); }
+.bl-btn-secondary { background: transparent; border-color: var(--bl-line-strong); color: var(--bl-text); }
+.bl-btn-secondary:hover { background: rgba(255,255,255,0.06); }
+.bl-btn-danger { background: var(--bl-red); color: #fff; }
+.bl-btn-danger:hover { filter: brightness(1.1); }
+
+.bl-iconbtn { background: none; border: none; color: var(--bl-text-faint); cursor: pointer; padding: 6px; border-radius: 5px; display: flex; align-items: center; justify-content: center; }
+.bl-iconbtn:hover { background: rgba(255,255,255,0.08); color: var(--bl-text); }
+.bl-iconbtn-danger:hover { background: rgba(212,59,46,0.15); color: var(--bl-red); }
+
+/* OVERALL EM ESTRELAS */
+.bl-stars { display: inline-flex; gap: 2px; align-items: center; }
+.bl-stars svg { color: var(--bl-line-strong); }
+.bl-stars svg.filled { color: var(--bl-gold); }
+.bl-stars-input { display: inline-flex; gap: 3px; cursor: pointer; }
+.bl-stars-input svg { transition: color 0.1s ease, transform 0.1s ease; cursor: pointer; }
+.bl-stars-input svg:hover { transform: scale(1.15); }
+
+/* TOAST */
+.bl-toast {
+  position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%);
+  background: var(--bl-bg-elev); border: 1px solid var(--bl-gold); color: var(--bl-text);
+  padding: 11px 18px; border-radius: 100px; font-size: 13.5px; font-weight: 500;
+  display: flex; align-items: center; gap: 7px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5); z-index: 200;
+}
+.bl-toast svg { color: var(--bl-gold); }
+.bl-toast-erro { border-color: var(--bl-red); max-width: 360px; text-align: center; line-height: 1.4; }
+
+/* Grupo de Alternância de Abas de Jogadores (FUT Premium Style) */
+.bl-toggle-group {
+  display: inline-flex;
+  background: #111114;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 3px;
+  border-radius: 8px;
+  gap: 2px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.bl-btn-toggle {
+  background: none;
+  border: none;
+  color: var(--bl-text-dim);
+  font-family: 'Oswald', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 8px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bl-btn-toggle:hover {
+  color: #FFF;
+}
+
+.bl-btn-toggle.active {
+  background: linear-gradient(135deg, var(--bl-gold-light), var(--bl-gold));
+  color: #1a1305;
+  box-shadow: 0 2px 8px rgba(212, 175, 55, 0.2);
+}
+
+/* ============================================================
+   BESTS LEAGUE — Indicador de Salvamento na Nuvem
+   ============================================================ */
+
+.bl-sync-indicator {
+  font-size: 0.8rem;
+  margin-left: 0.75rem;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  transition: all 0.25s ease-in-out;
+  vertical-align: middle;
+}
+
+/* Estado: Salvando (Cinza neutro) */
+.bl-sync-saving {
+  color: #a0aec0;
+  opacity: 0.8;
+}
+
+/* Estado: Sincronizado (Dourado de sucesso) */
+.bl-sync-saved {
+  color: #ffd700;
+  text-shadow: 0 0 8px rgba(255, 215, 0, 0.2);
+  animation: blPulseSaved 0.5s ease-in-out;
+}
+
+/* Estado: Erro (Vermelho de atenção) */
+.bl-sync-error {
+  color: #e53e3e;
+}
+
+/* Pequeno efeito de pulso quando salvar */
+@keyframes blPulseSaved {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+/* ============================================================
+   BESTS LEAGUE — Tela de Loading Estilo Trap/Street
+   ============================================================ */
+
+.bl-loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: #070708; /* Preto profundo industrial */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 99999; /* Fica por cima de absolutamente tudo */
+  transition: opacity 0.6s cubic-bezier(0.25, 1, 0.5, 1), visibility 0.6s;
+}
+
+.bl-loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+/* Logo pesado com sombra dourada */
+.bl-loading-logo {
+  font-family: 'Impact', 'Arial Black', sans-serif; /* Fonte pesada, blocada */
+  font-size: 3.5rem;
+  letter-spacing: 4px;
+  color: #ffffff;
+  margin: 0;
+  text-shadow: 0 0 20px rgba(255, 215, 0, 0.4); /* Brilho dourado trap */
+  animation: blBassGlow 1.2s infinite ease-in-out;
+}
+
+/* Pulso de áudio (Bass Ring) expandindo atrás da logo */
+.bl-trap-pulse {
+  position: absolute;
+  width: 120%;
+  height: 120%;
+  border: 2px solid #ffd700;
+  border-radius: 8px;
+  opacity: 0;
+  animation: blBassPulse 1.2s infinite cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+}
+
+.bl-loading-status {
+  font-size: 0.75rem;
+  color: #718096;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-top: 1.5rem;
+}
+
+/* Classe de fade-out disparada pelo JS */
+.bl-loading-overlay.bl-hide {
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* Animações: O brilho e o pulso simulando subgrave */
+@keyframes blBassGlow {
+  0%, 100% { transform: scale(1); text-shadow: 0 0 15px rgba(255, 215, 0, 0.3); }
+  50% { transform: scale(1.03); text-shadow: 0 0 30px rgba(255, 215, 0, 0.7); }
+}
+
+@keyframes blBassPulse {
+  0% { transform: scale(0.9); opacity: 0.6; border-color: #ffd700; }
+  100% { transform: scale(1.3); opacity: 0; border-color: #ff4500; } /* Transiciona pra um tom quente no fim */
+}
+
+/* ============================================================
+   BESTS LEAGUE — Botão Voltar Estilo Clean/Trap
+   ============================================================ */
+
+.bl-btn-voltar {
+  background: rgba(255, 255, 255, 0.02); /* Fundo quase invisível */
+  border: 1px solid rgba(255, 255, 255, 0.08); /* Borda sutil */
+  color: #a0aec0; /* Texto cinza escuro de segundo plano */
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem; /* Espaço perfeito entre a seta e o texto */
+  padding: 0.55rem 1.1rem;
+  border-radius: 4px; /* Cantos levemente suavizados */
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Efeito de foco/hover no estilo da banca */
+.bl-btn-voltar:hover {
+  background: rgba(255, 215, 0, 0.04); /* Brilho dourado de fundo bem de leve */
+  border-color: #ffd700; /* Borda dourada acesa */
+  color: #ffd700; /* Texto dourado */
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.12); /* Glow sutil */
+  transform: translateX(-2px); /* Dá um leve totó para a esquerda simulando o retorno */
+}
+
+/* Ajuste para o clique */
+.bl-btn-voltar:active {
+  transform: scale(0.98) translateX(-2px);
+}

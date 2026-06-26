@@ -1,0 +1,308 @@
+/* ============================================================
+   BESTS LEAGUE — cards estilo FIFA Ultimate Team (aba Jogadores)
+   ============================================================ */
+
+/* ============================================================
+   PÁGINA DE JOGADORES — cards estilo FIFA/PES (CORRIGIDO)
+   ============================================================ */
+.bl-elenco-toolbar { 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  margin-bottom: 28px; /* Aumentado para empurrar o time para baixo */
+  gap: 12px; 
+  flex-wrap: wrap; 
+}
+
+.bl-time-secao { 
+  margin-top: 12px; /* Adicionado para criar espaço extra no topo */
+  margin-bottom: 40px; 
+}
+.bl-time-secao-label {
+  display: flex; align-items: center; gap: 10px;
+  font-family: 'Oswald', sans-serif;
+  font-size: 14px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--bl-text-dim);
+  margin: 0 0 20px; padding-bottom: 10px;
+  border-bottom: 1px solid var(--bl-line);
+}
+
+.bl-fifa-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 24px 18px;
+  width: 100%;
+}
+
+/* Card principal — Proporções e formato FIFA real */
+.fut-player-card {
+  position: relative;
+  width: 190px; /* Alargado ligeiramente */
+  height: 270px; /* Encurtado para perder o aspecto esticado */
+  padding: 1.2rem 0 0.8rem;
+  cursor: pointer;
+  transition: transform 0.2s ease, filter 0.2s ease;
+  font-family: 'Saira Semi Condensed', 'Oswald', sans-serif;
+  flex-shrink: 0;
+  
+  /* Novo Clip-path: formato clássico de escudo do FUT, bico curto */
+  clip-path: polygon(
+    8% 0%, 92% 0%,
+    100% 6%,
+    100% 82%,
+    50% 100%,
+    0% 82%,
+    0% 6%
+  );
+  overflow: hidden;
+}
+
+/* Truque de Mestre: Criando um escudo interno escuro para dar o efeito de 
+   borda colorida e garantir contraste absoluto para os textos e números */
+.fut-player-card::after {
+  content: '';
+  position: absolute;
+  inset: 3px; /* Espessura da borda da carta */
+  background: rgba(15, 15, 18, 0.88); /* Fundo escuro e denso */
+  clip-path: polygon(
+    8% 0%, 92% 0%,
+    100% 6%,
+    100% 82%,
+    50% 100%,
+    0% 82%,
+    0% 6%
+  );
+  z-index: 1;
+}
+
+.fut-player-card:hover {
+  transform: translateY(-6px) scale(1.02);
+  filter: brightness(1.15);
+}
+
+/* Garante que o conteúdo fique acima do fundo escuro novo */
+.player-card-top, .player-card-bottom {
+  position: relative;
+  z-index: 2;
+}
+
+/* Topo do card */
+.player-card-top {
+  display: flex;
+  padding: 0 1.2rem;
+  height: 110px;
+}
+
+.player-master-info {
+  position: absolute;
+  left: 14px;
+  top: 10px;
+  line-height: 1.2;
+  text-transform: uppercase;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.player-master-info .player-rating {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #FFF !important; /* Força o Over a ser branco e saltar aos olhos */
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+}
+
+.player-master-info .player-position {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--fcard-cor); /* Mantém a cor da raridade sutil na posição */
+  margin-top: -2px;
+}
+
+.player-master-info .player-stars {
+  margin-top: 4px;
+  display: flex;
+  gap: 1px;
+}
+
+/* Silhueta do Jogador */
+.player-picture {
+  width: 110px;
+  height: 110px;
+  margin: 0 0 0 auto;
+  overflow: hidden;
+  position: relative;
+}
+.player-silhouette {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+.player-silhouette svg {
+  width: 90%;
+  height: 90%;
+}
+
+/* Parte inferior: Nome e Atributos */
+.player-card-bottom {
+  margin-top: 4px;
+}
+
+.player-info {
+  width: 90%;
+  margin: 0 auto;
+}
+
+/* Nome do jogador no estilo FIFA */
+.player-name {
+  width: 100%;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  padding-bottom: 0.2rem;
+  margin-bottom: 0.4rem;
+}
+.player-name span {
+  display: block;
+  color: #FFF !important; /* Nome sempre perfeitamente visível */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.9);
+}
+
+/* Colunas de Atributos corrigidas para não esmagar */
+.player-features {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+.player-features-col {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+.player-features-col:first-child {
+  border-right: 1px solid rgba(255, 255, 255, 0.15);
+  padding-right: 4px;
+}
+
+/* Cada linha de atributo (Ex: 10 GOLS) */
+.player-features-col span {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Separa o número do texto perfeitamente */
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  line-height: 1.2;
+}
+
+/* Os números dos atributos */
+.player-feature-value {
+  font-weight: 700;
+  color: var(--bl-gold-light) !important; /* Números em dourado vivo */
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.85rem;
+  text-align: left;
+}
+
+/* Os textos dos atributos (Gols, Média, Amar) */
+.player-feature-title {
+  font-weight: 500;
+  color: #A0AEC0 !important; /* Cinza claro de alto contraste */
+  font-size: 0.65rem;
+  letter-spacing: 0.02em;
+  text-align: right;
+}
+
+/* Versão Grande (Filtro de Perfil) */
+.fut-player-card.bl-fcard-grande {
+  width: 280px;
+  height: 400px;
+  padding: 1.8rem 0 1.5rem;
+  cursor: default;
+  pointer-events: none;
+}
+.fut-player-card.bl-fcard-grande .player-card-top { height: 160px; }
+.fut-player-card.bl-fcard-grande .player-picture { width: 160px; height: 160px; }
+.fut-player-card.bl-fcard-grande .player-rating { font-size: 3rem; }
+.fut-player-card.bl-fcard-grande .player-position { font-size: 1.1rem; }
+.fut-player-card.bl-fcard-grande .player-name { font-size: 1.5rem; }
+.fut-player-card.bl-fcard-grande .player-features-col span { font-size: 1rem; }
+.fut-player-card.bl-fcard-grande .player-feature-value { font-size: 1.2rem; }
+.fut-player-card.bl-fcard-grande .player-feature-title { font-size: 0.85rem; }
+
+/* Ajuste Fino para Telas Pequenas */
+@media (max-width: 760px) {
+  .bl-fifa-cards-grid { justify-content: center; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px 12px; }
+  .fut-player-card { width: 165px; height: 235px; padding: 1rem 0 0.6rem; }
+  .player-card-top { height: 90px; padding: 0 0.8rem; }
+  .player-picture { width: 90px; height: 90px; }
+  .player-master-info { left: 10px; top: 6px; }
+  .player-master-info .player-rating { font-size: 1.5rem; }
+  .player-master-info .player-position { font-size: 0.7rem; }
+  .player-name { font-size: 0.85rem; margin-bottom: 0.2rem; }
+  .player-features-col span { font-size: 0.68rem; }
+  .player-feature-value { font-size: 0.75rem; }
+  .player-feature-title { font-size: 0.58rem; }
+}
+
+.bl-perfil-wrap { display: flex; justify-content: center; padding: 20px 0 60px; }
+
+/* Layout do Perfil com Linha do Tempo de Estatísticas */
+.bl-perfil-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+  width: 100%;
+  max-width: 650px;
+  margin: 0 auto;
+}
+
+.bl-profile-history-section {
+  width: 100%;
+  background: var(--bl-bg-card);
+  border: 1px solid var(--bl-line);
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.bl-profile-history-title {
+  font-family: 'Oswald', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--bl-gold-light);
+  margin: 0 0 16px 0;
+  border-bottom: 1px solid var(--bl-line);
+  padding-bottom: 8px;
+}
+
+.bl-table-profile th {
+  padding-bottom: 12px;
+}
+
+.bl-table-profile td {
+  padding: 12px 10px;
+}
+
+@media (max-width: 760px) {
+  .bl-perfil-container {
+    gap: 20px;
+    padding: 0 4px;
+  }
+  .bl-profile-history-section {
+    padding: 14px 10px;
+  }
+  .bl-table-profile {
+    font-size: 12px;
+  }
+}

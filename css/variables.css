@@ -1,0 +1,51 @@
+/* ============================================================
+   BESTS LEAGUE — variáveis de cor (paleta) e reset base
+   ============================================================ */
+
+:root {
+  --bl-bg: #0A0A0C;
+  --bl-bg-elev: #131316;
+  --bl-bg-card: #18181C;
+  --bl-bg-card-2: #1E1E23;
+  --bl-line: rgba(255, 255, 255, 0.08);
+  --bl-line-strong: rgba(255, 255, 255, 0.16);
+  --bl-text: #F5F5F2;
+  --bl-text-dim: rgba(245, 245, 242, 0.55);
+  --bl-text-faint: rgba(245, 245, 242, 0.32);
+  --bl-gold: #D4AF37;
+  --bl-gold-light: #F0CC5C;
+  --bl-azul: #2A4FE0;
+  --bl-azul-claro: #5B7DFF;
+  --bl-red: #D43B2E;
+  --bl-amarelo: #E0B62F;
+  --bl-timeA: #F2EFE6;
+  --bl-timeB: #1a1a1a;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bl-bg);
+  color: var(--bl-text);
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.bl-root {
+  min-height: 100vh;
+  width: 100%;
+  position: relative;
+  background-image:
+    radial-gradient(circle at 50% 0%, rgba(212,175,55,0.07), transparent 55%),
+    linear-gradient(180deg, rgba(42,79,224,0.04), transparent 30%);
+}
+
+/* Força os menus suspensos nativos do navegador a ficarem escuros */
+select {
+  color-scheme: dark !important;
+}
+
+select option, select optgroup {
+  background-color: #131316 !important; /* var(--bl-bg-elev) */
+  color: #F5F5F2 !important; /* var(--bl-text) */
+}

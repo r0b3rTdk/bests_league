@@ -1,0 +1,356 @@
+/* ============================================================
+   BESTS LEAGUE — layout principal (header, hero, confronto, abas)
+   ============================================================ */
+
+/* HEADER */
+.bl-header {
+  border-bottom: 1px solid var(--bl-gold);
+  background: linear-gradient(180deg, rgba(19,19,22,0.95), rgba(10,10,12,0.6));
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  backdrop-filter: blur(8px);
+}
+.bl-header-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.bl-brand { display: flex; align-items: center; gap: 12px; }
+.bl-brand-badge {
+  width: 40px; height: 40px;
+  background: linear-gradient(135deg, var(--bl-gold-light), var(--bl-gold));
+  color: #1a1305;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Oswald', sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.02em;
+  flex-shrink: 0;
+  clip-path: polygon(15% 0%, 100% 0%, 85% 100%, 0% 100%);
+}
+.bl-brand-title {
+  font-family: 'Oswald', sans-serif;
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin: 0;
+  line-height: 1.2;
+  background: linear-gradient(90deg, var(--bl-gold-light), var(--bl-gold));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.bl-brand-sub {
+  font-size: 11.5px;
+  color: var(--bl-text-dim);
+  margin: 0;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+.bl-header-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: flex-end; }
+.bl-temporada-select {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--bl-line-strong);
+  border-radius: 6px;
+  padding: 7px 10px;
+  color: var(--bl-text);
+  font-family: 'Inter', sans-serif;
+  font-size: 12.5px;
+  max-width: 180px;
+}
+
+.bl-main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 28px 24px 90px;
+}
+
+/* HERO / PLACAR */
+.bl-hero { margin-bottom: 24px; }
+.bl-hero-label {
+  font-family: 'Oswald', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  color: var(--bl-gold);
+  margin: 0 0 12px;
+  text-align: center;
+}
+.bl-scoreboard {
+  background: linear-gradient(160deg, #131316, #0a0a0c);
+  border: 1px solid var(--bl-gold);
+  box-shadow: 0 0 0 1px rgba(212,175,55,0.15), inset 0 0 50px rgba(212,175,55,0.04), 0 12px 40px rgba(0,0,0,0.5);
+  border-radius: 4px;
+  padding: 18px 24px;
+  position: relative;
+  overflow: hidden;
+}
+.bl-scoreboard::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--bl-timeA), var(--bl-gold), var(--bl-timeB));
+}
+.bl-scoreboard-hero { padding: 30px 32px; }
+.bl-scoreboard-date {
+  text-align: center;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: var(--bl-text-faint);
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+.bl-scoreboard-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+}
+.bl-scoreboard-team {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 92px;
+}
+.bl-scoreboard-teamname {
+  font-family: 'Oswald', sans-serif;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--bl-text-dim);
+}
+.bl-scoreboard-score { display: flex; align-items: center; gap: 14px; }
+.bl-led {
+  font-family: 'Oswald', sans-serif;
+  font-weight: 700;
+  font-size: 58px;
+  line-height: 1;
+  color: var(--bl-gold-light);
+  text-shadow: 0 0 24px rgba(240,204,92,0.5), 0 0 2px rgba(240,204,92,0.9);
+  min-width: 58px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.bl-led-x { font-family: 'Oswald', sans-serif; font-size: 22px; color: var(--bl-text-faint); }
+.bl-scoreboard-craque {
+  margin-top: 16px;
+  text-align: center;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--bl-gold-light);
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+
+.bl-crest { border-radius: 50%; display: inline-block; flex-shrink: 0; box-shadow: 0 0 0 1px rgba(255,255,255,0.12); }
+
+/* CONFRONTO BAR */
+.bl-confronto-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  padding: 18px 0;
+  border-top: 1px solid var(--bl-line);
+  border-bottom: 1px solid var(--bl-line);
+  margin-bottom: 24px;
+}
+.bl-confronto-bar-vertical { flex-direction: row; }
+.bl-confronto-item { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.bl-confronto-num {
+  font-family: 'Oswald', sans-serif;
+  font-size: 27px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.bl-confronto-lbl { font-size: 11px; color: var(--bl-text-dim); letter-spacing: 0.03em; white-space: nowrap; }
+.bl-confronto-divider-h { width: 1px; height: 28px; background: var(--bl-line-strong); flex-shrink: 0; }
+.bl-confronto-row { display: flex; align-items: center; justify-content: center; gap: 22px; flex-wrap: wrap; }
+
+/* TABS */
+.bl-tabs {
+  display: flex;
+  gap: 2px;
+  margin-bottom: 22px;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--bl-line);
+}
+.bl-tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  color: var(--bl-text-dim);
+  font-family: 'Oswald', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  padding: 11px 16px;
+  cursor: pointer;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s ease, background 0.15s ease;
+  margin-bottom: -1px;
+}
+.bl-tab:hover { color: var(--bl-text); background: rgba(255,255,255,0.03); }
+.bl-tab-active { color: var(--bl-gold-light); border-bottom-color: var(--bl-gold); }
+.bl-tab-jogadores { margin-left: auto; color: var(--bl-azul-claro); }
+
+/* Esconde as barras de rolagem nativas das abas no mobile, mantendo o deslize */
+.bl-tabs {
+  scrollbar-width: none; /* Firefox */
+  -webkit-overflow-scrolling: touch;
+}
+.bl-tabs::-webkit-scrollbar {
+  display: none; /* Chrome, Safari e Opera */
+}
+
+/* RESPONSIVIDADE COMPLETA PARA CELULAR (SEM ARRASTAR ABAS) */
+@media (max-width: 760px) {
+  .bl-header-inner {
+    padding: 12px 16px;
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+  
+  .bl-header-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .bl-temporada-select {
+    flex: 1;
+    max-width: none;
+  }
+  
+  .bl-main {
+    padding: 16px 14px 80px;
+  }
+  
+  .bl-confronto-bar {
+    flex-direction: column;
+    gap: 14px;
+    padding: 14px 0;
+  }
+  
+  .bl-confronto-row {
+    gap: 14px;
+    width: 100%;
+    justify-content: space-around;
+  }
+  
+  .bl-confronto-divider-h {
+    width: 80%;
+    height: 1px;
+    background: var(--bl-line-strong);
+  }
+  
+  .bl-led {
+    font-size: 42px;
+  }
+
+  /* Transforma as abas em uma tabela/grid fixa de 3 colunas (2 linhas de 3) */
+  .bl-tabs {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 6px;
+    margin: 0 0 24px 0 !important;
+    padding: 0 !important;
+    overflow-x: visible !important; /* Mata o scroll lateral de vez */
+    border-bottom: none;
+  }
+  
+  /* Ajusta o botão para o formato de app mobile (ícone em cima, texto embaixo) */
+  .bl-tab {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 4px !important;
+    padding: 10px 4px !important;
+    font-size: 11px !important;
+    white-space: normal !important;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--bl-line);
+    border-radius: 6px;
+    margin-bottom: 0 !important;
+  }
+
+  .bl-tab:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  /* Destaca a aba ativa com uma bordinha dourada embaixo de cada quadradinho */
+  .bl-tab-active {
+    background: rgba(212, 175, 55, 0.06) !important;
+    border-color: rgba(212, 175, 55, 0.3) !important;
+    border-bottom: 2px solid var(--bl-gold) !important;
+  }
+  
+  /* Reseta o empurrão para a direita que a aba Jogadores tinha no computador */
+  .bl-tab-jogadores {
+    margin-left: 0 !important;
+  }
+}
+
+/* Destaque para o Vencedor no Calendário */
+.bl-row-vencedor {
+  color: var(--bl-gold-light) !important;
+  font-weight: 700 !important;
+}
+
+/* ============================================================
+   BESTS LEAGUE — Footer Minimalista r0b3rt
+   ============================================================ */
+
+.bl-footer {
+  width: 100%;
+  padding: 2.5rem 1.5rem;
+  margin-top: 5rem; /* Afasta o footer do conteúdo principal */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: transparent;
+}
+
+.bl-footer-btn {
+  background: none;
+  border: none;
+  color: #a0aec0; /* Cinza sutil por padrão */
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  transition: color 0.25s ease-in-out;
+  font-family: inherit;
+  padding: 0;
+}
+
+/* Efeito: Fica dourado ao passar o mouse ou clicar (active/focus) */
+.bl-footer-btn:hover,
+.bl-footer-btn:focus,
+.bl-footer-btn:active {
+  color: #ffd700; /* Dourado */
+  outline: none;
+}
+
+/* Ajuste fino para telas de celular (Smartphones) */
+@media (max-width: 480px) {
+  .bl-btn-voltar {
+    width: 100%;            /* O botão vira bloco cheio, ocupando a largura disponível */
+    justify-content: center; /* Centraliza a seta e o texto no meio da tela */
+    padding: 0.75rem 1rem;   /* Aumenta a altura para 46px (perfeito para o clique do dedão) */
+    font-size: 0.9rem;       /* Aumenta a fonte de leve para melhorar a leitura no sol */
+  }
+}
