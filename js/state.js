@@ -31,11 +31,7 @@ function loadAppState() {
 }
 
 function saveAppState() {
-  // 🔹 LIMPEZA ANTI-UNDEFINED: Transforma em texto e volta para objeto. 
-  // Isso remove automaticamente qualquer propriedade 'undefined' que o Firebase odeia.
   const limpo = JSON.parse(JSON.stringify(appState));
-  
-  // 1. Salva no cache local
   localStorage.setItem("bests-league-state", JSON.stringify(limpo));
   
   const indicator = document.getElementById("syncIndicator");
@@ -45,8 +41,8 @@ function saveAppState() {
   }
   
   if (typeof db !== "undefined") {
-    // 🔹 Enviamos a versão limpa para o Firebase
-    db.ref("bests_league").set(limpo)
+    // 🔹 CORREÇÃO: Troque "bests_league" por window.FIREBASE_DB_PATH
+    db.ref(window.FIREBASE_DB_PATH).set(limpo)
       .then(() => {
         if (indicator) {
           indicator.innerHTML = "☁️ Sincronizado";

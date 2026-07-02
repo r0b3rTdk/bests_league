@@ -1,84 +1,127 @@
-# 🏆 Bests League — Dashboard de Gestão de Peladas
+# 🏆 Bests League
 
-A **Bests League** é uma plataforma web **SPA (Single Page Application)** de alta performance desenvolvida para gerenciar estatísticas, elencos, calendários, artilharia e cartões de uma liga de futebol amador.
+> **Dashboard moderno para gerenciamento de peladas e ligas de futebol amador.**
 
-O projeto adota uma identidade visual pesada e minimalista inspirada na estética **trap/streetwear**, utilizando uma paleta **total blackout**, tipografia robusta e detalhes em **dourado neon**, proporcionando uma experiência moderna e responsiva.
+A **Bests League** é uma **Single Page Application (SPA)** desenvolvida em **JavaScript Vanilla**, criada para administrar temporadas, partidas, estatísticas, elencos, artilharia e cartões de uma liga de futebol amador.
+
+O projeto foi desenvolvido com foco em **performance**, **arquitetura modular**, **experiência do usuário** e **sincronização em tempo real**, utilizando o **Firebase Realtime Database** como backend.
 
 ---
 
-# ⚡ Principais Funcionalidades
+## ✨ Preview
+
+> *(Adicione aqui um GIF ou screenshots da aplicação.)*
+
+```
+📸 assets/preview.png
+```
+
+---
+
+# 🚀 Funcionalidades
 
 ## 🔊 Loading Screen Trap Style
 
-Tela de carregamento imersiva com animação **Bass Pulse**, simulando a batida de um subgrave 808, além de inicialização através da interação do usuário com o botão **"Entrar na Banca"**, respeitando as políticas modernas de reprodução de áudio dos navegadores.
+Tela de carregamento personalizada inspirada na estética trap, com animação **Bass Pulse**, simulando a batida de um subgrave **808**.
+
+O áudio é iniciado apenas após o clique em **"Entrar na Banca"**, respeitando as políticas modernas de reprodução automática dos navegadores.
 
 ---
 
-## 🔄 Sincronização Reativa
+## 📊 Hero Dinâmico da Temporada
 
-Integração em tempo real com o **Firebase Realtime Database**.
+Ao arquivar uma temporada, o Hero principal é transformado automaticamente em um banner premium com a identidade visual do time campeão.
 
-Toda alteração realizada em:
+São exibidas informações como:
 
+* 🏆 Time Campeão
+* 📈 Aproveitamento
+* ✅ Vitórias
+* 🤝 Empates
+* ❌ Derrotas
+* ⚽ Gols Pró
+* 🥅 Gols Contra
+
+---
+
+## 👥 Aba "Lendas da Pelada"
+
+Sistema responsável por reconstruir automaticamente a carreira completa dos jogadores.
+
+### Recursos
+
+* Histórico de todas as temporadas
+* Soma das estatísticas da carreira
+* Agrupamento inteligente por nome
+* Ignora diferenças entre maiúsculas/minúsculas
+* Remove espaços extras automaticamente
+* Desconsidera temporadas fantasmas ou rascunhos sem jogos válidos
+
+---
+
+## ⚽ Gestão Completa da Liga
+
+A plataforma permite administrar:
+
+* Temporadas
 * Jogos
 * Elencos
+* Jogadores
+* Artilharia
 * Cartões
-* Estatísticas
 * Classificação
+* Campeões
 
-é sincronizada automaticamente com a nuvem e refletida instantaneamente para todos os usuários conectados, sem necessidade de atualizar a página.
-
----
-
-## 🛡️ Painel Administrativo Oculto
-
-Sistema administrativo protegido por autenticação local.
-
-O acesso é realizado através de:
-
-* Clique secreto no rodapé
-* Solicitação de senha
-* Geração de token local
-
-Garantindo que apenas administradores possam editar os dados da liga.
+Tudo dentro de uma única SPA.
 
 ---
 
-## 📅 Gestão Inteligente de Temporadas
+## 🔄 Sincronização em Tempo Real
 
-O sistema identifica automaticamente a temporada em andamento e abre diretamente nela.
+Utilizando o **Firebase Realtime Database**, qualquer alteração realizada é sincronizada instantaneamente entre todos os usuários conectados.
 
-Temporadas anteriores permanecem arquivadas para consulta, sem interferir nos dados atuais.
-
----
-
-## 📱 Layout 100% Responsivo
-
-Interface adaptada para:
-
-* Desktop
-* Tablets
-* Smartphones
-
-Ideal para atualização rápida das partidas diretamente na beira do campo.
+Não é necessário atualizar a página.
 
 ---
 
-# 📁 Estrutura do Projeto
+## 🛡️ Painel Administrativo
 
-```text
+O sistema possui um painel administrativo oculto.
+
+O acesso ocorre através de:
+
+1. Clique secreto no rodapé;
+2. Autenticação por senha local;
+3. Liberação das funções administrativas.
+
+Após autenticado é possível:
+
+* Criar temporadas
+* Editar partidas
+* Gerenciar elencos
+* Atualizar estatísticas
+
+---
+
+# 🧠 Arquitetura
+
+A aplicação foi construída utilizando arquitetura modular em JavaScript ES Modules.
+
+```
+📦 bests-league
+│
 ├── css/
-│   ├── variables.css      # Variáveis globais e paleta de cores
-│   ├── layout.css         # Estrutura geral da aplicação
-│   ├── components.css     # Botões, inputs e componentes reutilizáveis
-│   ├── modal.css          # Estilos dos modais
-│   └── player-cards.css   # Cards dos jogadores
+│   ├── variables.css
+│   ├── layout.css
+│   ├── components.css
+│   ├── modal.css
+│   └── player-cards.css
 │
 ├── js/
-│   ├── firebase-init.js   # Inicialização do Firebase
-│   ├── data.js            # Modelos e dados iniciais
-│   ├── state.js           # Estado global da aplicação
-│   ├── calc.js            # Algoritmos de classificação e estatísticas
+│   ├── firebase-init.js
+│   ├── data.js
+│   ├── state.js
+│   ├── calc.js
 │   │
 │   ├── render/
 │   │   ├── helpers.js
@@ -93,7 +136,7 @@ Ideal para atualização rápida das partidas diretamente na beira do campo.
 │   │   ├── elenco.js
 │   │   └── temporada.js
 │   │
-│   └── app.js             # Bootstrap da aplicação
+│   └── app.js
 │
 ├── index.html
 └── README.md
@@ -101,26 +144,34 @@ Ideal para atualização rápida das partidas diretamente na beira do campo.
 
 ---
 
-# 🛠️ Tecnologias Utilizadas
+# 🛠️ Tecnologias
+
+### Front-end
 
 * HTML5
 * CSS3
-
-  * Variáveis CSS
-  * Flexbox
-  * Keyframes
 * JavaScript ES6+
+
+### Estilização
+
+* CSS Variables
+* Flexbox
+* CSS Grid
+* Keyframes Animations
+
+### Persistência
+
 * Firebase Realtime Database
-* LocalStorage API
+* LocalStorage
 
 ---
 
-# 🚀 Executando Localmente
+# ⚙️ Executando o projeto
 
 ## 1. Clone o repositório
 
 ```bash
-git clone https://github.com/SEU_USUARIO/bests-league.git
+git clone https://github.com/seu-usuario/bests-league.git
 
 cd bests-league
 ```
@@ -129,11 +180,11 @@ cd bests-league
 
 ## 2. Configure o Firebase
 
-Crie um projeto no **Firebase Console**.
+Crie um projeto no Firebase.
 
 Ative o **Realtime Database**.
 
-Durante os testes utilize as seguintes regras:
+Durante o desenvolvimento utilize as seguintes regras:
 
 ```json
 {
@@ -144,50 +195,84 @@ Durante os testes utilize as seguintes regras:
 }
 ```
 
-Depois disso, substitua as credenciais dentro de:
+Depois insira as credenciais em:
 
-```text
+```
 js/firebase-init.js
 ```
 
 ---
 
-## 3. Execute o projeto
+## 3. Execute um servidor local
 
-Como a aplicação foi construída utilizando apenas JavaScript Vanilla, basta:
+Como o projeto utiliza **ES Modules**, ele precisa ser servido através de um servidor HTTP.
 
-* abrir o arquivo `index.html`
+### Live Server
+
+Basta abrir o projeto no VS Code e iniciar o **Live Server**.
 
 ou
 
-* utilizar a extensão **Live Server** do VS Code.
-
----
-
-# 📦 Deploy
-
-O projeto pode ser publicado facilmente utilizando **GitHub Pages**.
-
-Sempre que houver alterações:
+### Python
 
 ```bash
-git add .
+python -m http.server 8000
+```
 
-git commit -m "feat: melhorias na dashboard"
+Depois acesse:
 
-git push origin main
+```
+http://localhost:8000
 ```
 
 ---
 
-# 🎯 Objetivo
+# 💡 Destaques Técnicos
 
-A Bests League foi criada para oferecer uma forma rápida, intuitiva e centralizada de organizar campeonatos de futebol amador, mantendo estatísticas, histórico das partidas e gerenciamento de jogadores em tempo real.
+* Arquitetura modular
+* JavaScript Vanilla
+* SPA sem frameworks
+* Firebase Realtime Database
+* Atualização em tempo real
+* Componentização por módulos
+* Renderização dinâmica
+* Algoritmos de estatísticas
+* Organização escalável
+* Interface responsiva
+* Identidade visual inspirada na cultura trap/streetwear
 
 ---
 
-# 💻 Autor
+# 📈 Próximas funcionalidades
+
+* [ ] Ranking histórico completo
+* [ ] Exportação de estatísticas
+* [ ] Sistema de usuários
+* [ ] Login com Firebase Authentication
+* [ ] Dashboard administrativo online
+* [ ] Tema claro
+* [ ] PWA
+* [ ] Exportação para PDF
+* [ ] Compartilhamento de partidas
+
+---
+
+# 👨‍💻 Autor
 
 **Robert Emanuel** *(r0b3rT)*
 
-Desenvolvido com foco em **performance**, **arquitetura modular**, **experiência do usuário** e, claro, muita **resenha esportiva**. ⚽🔥
+Backend Developer • Data Analytics • Cybersecurity
+
+Desenvolvido com foco em:
+
+* Código limpo
+* Performance
+* Arquitetura escalável
+* UX moderna
+* Organização modular
+
+---
+
+## ⭐ Gostou do projeto?
+
+Se este projeto foi útil ou serviu de inspiração, considere deixar uma **⭐ no repositório**.

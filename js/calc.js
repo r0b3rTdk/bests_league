@@ -5,19 +5,27 @@
 
 function calcularArtilharia(temp) {
   const mapa = {};
+  
+  // 🔹 DEFESA NATIVA: Garante arrays seguros se o Firebase apagar as chaves vazias
+  const jogos = temp && temp.jogos ? temp.jogos : [];
+  const jogadores = temp && temp.jogadores ? temp.jogadores : [];
+
   const garante = (nome) => {
     if (!mapa[nome]) {
-      const j = temp.jogadores.find((p) => p.nome === nome);
+      const j = jogadores.find((p) => p.nome === nome);
       mapa[nome] = { jogador: nome, time: j ? j.time : null, gols: 0 };
     }
   };
-  if (temp.historico) {
+
+  if (temp && temp.historico && temp.historico.gols) {
     temp.historico.gols.forEach((g) => {
       garante(g.jogador);
       mapa[g.jogador].gols += g.quantidade;
     });
   }
-  temp.jogos.forEach((jogo) => {
+
+  // Usando a variável blindada 'jogos'
+  jogos.forEach((jogo) => {
     (jogo.gols || []).forEach((g) => {
       garante(g.jogador);
       mapa[g.jogador].gols += g.quantidade;
@@ -28,13 +36,20 @@ function calcularArtilharia(temp) {
 
 function calcularCartoes(temp) {
   const mapa = {};
+  
+  // 🔹 DEFESA NATIVA
+  const jogos = temp && temp.jogos ? temp.jogos : [];
+  const jogadores = temp && temp.jogadores ? temp.jogadores : [];
+
   const garante = (nome) => {
     if (!mapa[nome]) {
-      const j = temp.jogadores.find((p) => p.nome === nome);
+      const j = jogadores.find((p) => p.nome === nome);
       mapa[nome] = { jogador: nome, time: j ? j.time : null, amarelos: 0, vermelhos: 0 };
     }
   };
-  temp.jogos.forEach((jogo) => {
+
+  // Usando a variável blindada 'jogos'
+  jogos.forEach((jogo) => {
     (jogo.cartoes || []).forEach((c) => {
       garante(c.jogador);
       if (c.tipo === "amarelo") mapa[c.jogador].amarelos += 1;
@@ -46,7 +61,12 @@ function calcularCartoes(temp) {
 
 function calcularCraques(temp) {
   const mapa = {};
-  temp.jogos.forEach((jogo) => {
+  
+  // 🔹 DEFESA NATIVA
+  const jogos = temp && temp.jogos ? temp.jogos : [];
+
+  // Usando a variável blindada 'jogos'
+  jogos.forEach((jogo) => {
     if (!jogo.craque) return;
     if (!mapa[jogo.craque]) mapa[jogo.craque] = 0;
     mapa[jogo.craque] += 1;
@@ -59,7 +79,11 @@ function calcularCraques(temp) {
 function calcularConfronto(temp) {
   let vitoriasA = 0, vitoriasB = 0, empates = 0;
   let golsA = 0, golsB = 0, jogosValidos = 0;
-  temp.jogos.forEach((jogo) => {
+  
+  // 🔹 DEFESA NATIVA
+  const jogos = temp && temp.jogos ? temp.jogos : [];
+  
+  jogos.forEach((jogo) => {
     if (jogo.placarA === null || jogo.placarA === undefined || jogo.placarB === null || jogo.placarB === undefined) return;
     jogosValidos++;
     golsA += jogo.placarA;
@@ -74,17 +98,25 @@ function calcularConfronto(temp) {
 }
 
 function jogosOrdenados(temp) {
-  return [...temp.jogos].sort((a, b) => (a.date || "9999").localeCompare(b.date || "9999"));
+  // 🔹 DEFESA NATIVA
+  const jogos = temp && temp.jogos ? temp.jogos : [];
+  return [...jogos].sort((a, b) => (a.date || "9999").localeCompare(b.date || "9999"));
 }
 
 // Estatísticas individuais de um jogador específico (para o card/perfil)
 function estatisticasJogador(temp, nomeJogador) {
   let gols = 0, amarelos = 0, vermelhos = 0, craques = 0;
-  if (temp.historico) {
+  
+  // 🔹 DEFESA NATIVA
+  const jogos = temp && temp.jogos ? temp.jogos : [];
+
+  if (temp && temp.historico && temp.historico.gols) {
     temp.historico.gols.forEach((g) => { if (g.jogador === nomeJogador) gols += g.quantidade; });
   }
-  const jogosComPlacar = temp.jogos.filter((j) => j.placarA !== null && j.placarA !== undefined);
-  temp.jogos.forEach((jogo) => {
+  
+  const jogosComPlacar = jogos.filter((j) => j.placarA !== null && j.placarA !== undefined);
+  
+  jogos.forEach((jogo) => {
     (jogo.gols || []).forEach((g) => {
       if (g.jogador === nomeJogador) gols += g.quantidade;
     });
@@ -95,8 +127,7 @@ function estatisticasJogador(temp, nomeJogador) {
     });
     if (jogo.craque === nomeJogador) craques++;
   });
-  // Média de gols por jogo: usamos o total de jogos disputados na temporada
-  // como base, já que não registramos escalação individual por partida.
+
   const jogosDisputados = jogosComPlacar.length;
   const mediaGolsPorJogo = jogosDisputados > 0 ? (gols / jogosDisputados) : 0;
   return { gols, amarelos, vermelhos, craques, jogosDisputados, mediaGolsPorJogo };

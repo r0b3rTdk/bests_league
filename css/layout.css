@@ -354,3 +354,267 @@
     font-size: 0.9rem;       /* Aumenta a fonte de leve para melhorar a leitura no sol */
   }
 }
+
+/* ============================================================
+   BESTS LEAGUE — ESTILOS COMPLEMENTARES HALL OF FAME (FIM DE ANO)
+   ============================================================ */
+
+/* Altera o tamanho máximo do modal para caber a dashboard completa */
+.bl-modal-lg {
+  max-width: 750px !important;
+  width: 95%;
+}
+
+.bl-gold-glow-title {
+  font-family: 'Impact', sans-serif;
+  color: #ffd700;
+  text-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+  letter-spacing: 1.5px;
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Banner Principal do Campeão */
+.bl-champion-banner {
+  background: linear-gradient(135deg, #0f0f12 0%, #1a1a24 100%);
+  border: 2px solid var(--team-color);
+  border-radius: 8px;
+  padding: 1.5rem;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(255, 215, 0, 0.05);
+  margin-bottom: 1.2rem;
+}
+
+.bl-trophy-sticker {
+  font-size: 3.5rem;
+  margin-bottom: 0.5rem;
+  animation: floatTrophy 3s ease-in-out infinite;
+}
+
+.bl-champ-sub {
+  font-size: 0.75rem;
+  color: #ffd700;
+  font-weight: 700;
+  letter-spacing: 2px;
+  margin: 0;
+}
+
+.bl-champ-name {
+  font-family: 'Impact', sans-serif;
+  font-size: 2.5rem;
+  color: #fff;
+  margin: 0.3rem 0 0 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Cards de estatísticas horizontais */
+.bl-champ-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.6rem;
+  margin-bottom: 1.2rem;
+}
+
+.bl-stat-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  padding: 0.8rem 0.4rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.bl-stat-card span {
+  font-family: 'Impact', sans-serif;
+  font-size: 1.3rem;
+  color: #fff;
+}
+
+.bl-stat-card label {
+  font-size: 0.65rem;
+  color: #718096;
+  text-transform: uppercase;
+  margin-top: 0.2rem;
+  letter-spacing: 0.5px;
+}
+
+/* Linha de Prêmios Individuais */
+.bl-awards-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+  margin-bottom: 1.5rem;
+}
+
+.bl-award-badge {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 6px;
+  padding: 0.9rem;
+}
+
+.bl-award-badge.gold { border: 1px solid rgba(255, 215, 0, 0.2); background: linear-gradient(90deg, rgba(255,215,0,0.02) 0%, rgba(0,0,0,0) 100%); }
+.bl-award-badge.purple { border: 1px solid rgba(176, 144, 232, 0.2); background: linear-gradient(90deg, rgba(176,144,232,0.02) 0%, rgba(0,0,0,0) 100%); }
+
+.bl-award-icon {
+  font-size: 2rem;
+}
+
+.bl-award-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.bl-award-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+.bl-award-badge.gold .bl-award-label { color: #ffd700; }
+.bl-award-badge.purple .bl-award-label { color: #b090e8; }
+
+.bl-award-player {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0.1rem 0;
+}
+
+.bl-award-stat {
+  font-size: 0.8rem;
+  color: #a0aec0;
+}
+
+/* Grid de cards reduzido para o Hall of Fame */
+.bl-section-title-fame {
+  font-size: 0.9rem;
+  color: #a0aec0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 0.6rem;
+}
+
+/* ============================================================
+   BESTS LEAGUE — ESTEIRA HORIZONTAL DO HALL OF FAME DEFINITIVA
+   ============================================================ */
+
+.bl-fifa-cards-grid-fame {
+  display: flex !important; /* Transforma o grid em linha flexível */
+  flex-direction: row !important;
+  flex-wrap: nowrap !important; /* Força todos os cards a ficarem estritamente lado a lado */
+  overflow-x: auto !important; /* Ativa a rolagem horizontal */
+  overflow-y: hidden !important; /* Corta qualquer vazamento para baixo */
+  gap: 16px !important;
+  padding: 12px 14px 35px 14px !important; /* Espaço extra na base para a sombra das cartas respirar */
+  background: transparent !important;
+  margin-bottom: 1rem;
+  height: 320px !important; /* Altura perfeita para exibir o card FUT completo com as stats */
+  scrollbar-width: none !important; /* Oculta a barra física no Firefox */
+  -webkit-overflow-scrolling: touch; /* Rolagem por toque ultra-fluida no mobile */
+}
+
+/* Oculta a barra de rolagem física no Chrome, Safari, Opera e Edge */
+.bl-fifa-cards-grid-fame::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+/* Garante a integridade física de cada carta na esteira */
+.bl-fifa-cards-grid-fame .fut-player-card {
+  flex-shrink: 0 !important; /* Impede o flexbox de amassar ou achatar o card */
+  transform: scale(1) !important; /* Restaura a escala cheia e nítida */
+  margin: 0 !important;
+}
+
+/* Botão de Avançar Temporada */
+.bl-btn-next-season {
+  width: 100%;
+  background: #fff;
+  color: #000;
+  border: none;
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 0.9rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.bl-btn-next-season:hover {
+  background: #ffd700;
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+}
+
+/* Animação do troféu flutuando */
+@keyframes floatTrophy {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+  100% { transform: translateY(0px); }
+}
+
+/* Ajuste Responsivo */
+@media (max-width: 600px) {
+  .bl-champ-stats-grid { grid-template-columns: 1fr 1fr; }
+  .bl-awards-row { grid-template-columns: 1fr; }
+}
+
+/* Container do Bloco Inline */
+.bl-hall-fame-inline-container {
+  padding: 1rem 0;
+  animation: fadeIn 0.4s ease;
+}
+
+/* ============================================================
+   BESTS LEAGUE — BLOCO PADRÃO DE ESTATÍSTICAS (ESTILO PREMIUM)
+   ============================================================ */
+/* Container que dá o fundo e bordas (o "container premium") */
+.bl-estatisticas-container {
+  background: #111; 
+  border: 1px solid #222; 
+  border-radius: 12px; 
+  padding: 35px 25px;
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+/* Título superior */
+.bl-estatisticas-titulo {
+  display: flex; 
+  align-items: center; 
+  gap: 8px; 
+  margin-bottom: 15px; 
+  color: var(--bl-gold-light); 
+  font-family: 'Impact', sans-serif; 
+  letter-spacing: 1px; 
+  text-transform: uppercase;
+}
+
+/* Grade de layout */
+.bl-estatisticas-grid-top {
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  border-bottom: 1px solid #222; 
+  padding-bottom: 25px; 
+  margin-bottom: 25px;
+}
+
+.bl-estatisticas-grid-bottom {
+  display: grid; 
+  grid-template-columns: repeat(3, 1fr); 
+  text-align: center; 
+  gap: 30px;
+}
+
+/* Elementos de texto e pílula */
+.bl-stat-valor { font-family: 'Impact', sans-serif; font-size: 2.4rem; color: #FFF; line-height: 1; }
+.bl-stat-label { font-size: 0.75rem; color: #888; text-transform: uppercase; margin-top: 8px; }
+.bl-empates-pill { background: #2a2a2a; padding: 12px 28px; border-radius: 12px; text-align: center; margin: 0 20px; }

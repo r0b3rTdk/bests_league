@@ -3,17 +3,23 @@
 // (Início, Calendário, Artilharia, Cartões, Craque do jogo)
 // ============================================================
 
-// ---------- ABAS ----------
-
 function renderTabContent() {
   const container = document.getElementById("tabContent");
+  const temp = temporadaVisualizada();
   perfilJogadorAberto = null; // sair de qualquer perfil aberto ao trocar de aba
-  if (currentTab === "inicio") container.innerHTML = renderInicio();
+  
+  // 🔹 CORREÇÃO: Verifica se a temporada está arquivada antes de desenhar
+  const ehArquivada = temp && (temp.arquivadaEm || temp.nome.toLowerCase().includes("arquivada"));
+
+  if (currentTab === "inicio") {
+    container.innerHTML = ehArquivada ? gerarHtmlHallOfFameInline(temp) : renderInicio();
+  }
   else if (currentTab === "calendario") container.innerHTML = renderCalendario();
   else if (currentTab === "artilharia") container.innerHTML = renderArtilharia();
   else if (currentTab === "disciplina") container.innerHTML = renderDisciplina();
   else if (currentTab === "craques") container.innerHTML = renderCraques();
   else if (currentTab === "jogadores") container.innerHTML = renderJogadoresTab();
+  
   attachTabContentListeners();
 }
 
@@ -25,7 +31,7 @@ function renderInicio() {
   const liderCraque = craques[0];
   const ultimos5 = jogosOrdenados(temp).slice(-5).reverse();
 
-  return `
+  let html = `
     <div class="bl-grid-2">
       <div class="bl-card">
         <h3 class="bl-card-title">${ICONS.goal.replace('width="32" height="32"', 'width="16" height="16"')} Artilheiro da temporada</h3>
@@ -71,13 +77,16 @@ function renderInicio() {
       </div>
     </div>
   `;
+    
+  return html;
+  
 }
 
 function renderCalendario() {
   const temp = temporadaVisualizada();
   const jogos = jogosOrdenados(temp);
   
-  // Checagem de privilégios para exibição da coluna de modificação
+  // Sincroniza se é admin
   const adminToken = window.localStorage.getItem("bl_admin_token");
   const isAdmin = adminToken === "PELADA_ADMIN_2026";
 
@@ -111,7 +120,7 @@ function renderCalendario() {
                 <td style="text-align:right;" class="bl-td-time bl-td-timeA ${vitoriaA ? 'bl-row-vencedor' : ''}">
                   ${vitoriaA ? '🏆 ' : ''}${escapeHtml(temp.timeA.nome)}
                 </td>
-                <td class="bl-td-placar" style="font-weight:${semPlacar ? '400' : '700'}; color:${semPlacar ? 'var(--bl-text)' : 'var(--bl-text)'};">
+                <td class="bl-td-placar" style="font-weight:${semPlacar ? '400' : '700'};">
                   ${j.placarA} <span class="bl-td-x">×</span> ${j.placarB}
                 </td>
                 <td style="text-align:left;" class="bl-td-time bl-td-timeB ${vitoriaB ? 'bl-row-vencedor' : ''}">
@@ -248,15 +257,6 @@ function attachTabContentListeners() {
   if (btnGerenciar) btnGerenciar.addEventListener("click", () => openElencoModal());
 }
 
-// Atualiza só o conteúdo da aba atual, sem resetar o perfil aberto
-// (diferente de renderTabContent, que é chamado ao trocar de aba de fato).
 function renderTabContentOnly() {
-  const container = document.getElementById("tabContent");
-  if (currentTab === "inicio") container.innerHTML = renderInicio();
-  else if (currentTab === "calendario") container.innerHTML = renderCalendario();
-  else if (currentTab === "artilharia") container.innerHTML = renderArtilharia();
-  else if (currentTab === "disciplina") container.innerHTML = renderDisciplina();
-  else if (currentTab === "craques") container.innerHTML = renderCraques();
-  else if (currentTab === "jogadores") container.innerHTML = renderJogadoresTab();
-  attachTabContentListeners();
+  renderTabContent(); // Unifica o fluxo para evitar duplicidade de bugs
 }

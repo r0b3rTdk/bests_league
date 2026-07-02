@@ -113,3 +113,214 @@
   .bl-input-inline-nome { font-size: 12px; padding: 5px 4px; }
   .bl-select-inline-time { width: 50px; font-size: 10px; }
 }
+
+/* Layout Avançado de Formulário para Nova Temporada */
+.bl-form-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.bl-form-row-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+/* Grupo de Input de Texto + Seletor de Cor Embutido */
+.bl-input-color-group {
+  display: flex;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.bl-input-color-group input[type="text"] {
+  flex: 1;
+  background: transparent;
+  border: none;
+  padding: 0.6rem;
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+}
+
+.bl-input-color-group input[type="color"] {
+  width: 45px;
+  height: 100%;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+}
+
+/* Divisor de seções dentro do modal */
+.bl-modal-divider {
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  margin: 0.5rem 0;
+}
+
+.bl-label-secao {
+  font-size: 0.85rem;
+  color: #ffd700 !important;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.5rem;
+}
+
+/* Caixas de seleção estilo Card de Opção */
+.bl-radio-box-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.bl-radio-tile {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.bl-radio-tile:has(input:checked) {
+  border-color: #ffd700;
+  background: rgba(255, 215, 0, 0.02);
+}
+
+.bl-radio-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.bl-radio-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.bl-radio-desc {
+  font-size: 0.75rem;
+  color: #718096;
+  margin-top: 0.2rem;
+}
+
+/* Opções secundárias de Estrelas */
+.bl-radio-box-group-sub {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-left: 0.5rem;
+}
+
+.bl-radio-inline {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: #a0aec0;
+  cursor: pointer;
+}
+
+.bl-radio-inline input:checked + span {
+  color: #fff;
+}
+
+/* Botão de Envio Estilo Banca */
+.bl-btn-submit-banca {
+  width: 100%;
+  background: #ffd700;
+  color: #070708;
+  border: none;
+  font-family: 'Impact', sans-serif;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  padding: 0.8rem;
+  border-radius: 4px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+  margin-top: 0.5rem;
+}
+
+.bl-btn-submit-banca:hover {
+  background: #fff;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+.bl-disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Responsividade do Form */
+@media (max-width: 480px) {
+  .bl-form-row-2col {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Fix de Responsividade: Impede que os inputs empurrem o modal para os lados */
+.bl-form-layout input[type="text"] {
+  width: 100% !important;
+  min-width: 0 !important; /* Mágica que remove o tamanho mínimo fixo do navegador */
+  box-sizing: border-box;
+}
+
+.bl-input-color-group input[type="text"] {
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+/* Container da Zona de Perigo */
+.bl-danger-zone {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  border: 1px dashed #ff4500;
+  background: rgba(255, 69, 0, 0.02);
+  border-radius: 6px;
+}
+
+.bl-danger-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #ff4500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 0 0.2rem 0;
+}
+
+.bl-danger-desc {
+  font-size: 0.8rem;
+  color: #a0aec0;
+  margin: 0 0 0.8rem 0;
+}
+
+.bl-danger-desc strong {
+  color: #fff;
+}
+
+/* Botão Destrutivo de Exclusão */
+.bl-btn-danger-banca {
+  width: 100%;
+  background: transparent;
+  border: 1px solid #ff4500;
+  color: #ff4500;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.55rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.bl-btn-danger-banca:hover {
+  background: #ff4500;
+  color: #fff;
+  box-shadow: 0 0 15px rgba(255, 69, 0, 0.2);
+}

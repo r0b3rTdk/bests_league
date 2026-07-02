@@ -14,6 +14,9 @@ function initTabs() {
 }
 
 function initTemporadaSelect() {
+  const adminToken = window.localStorage.getItem("bl_admin_token");
+  window.isAdmin = adminToken === "PELADA_ADMIN_2026";
+
   const select = document.getElementById("temporadaSelect");
   select.addEventListener("change", () => {
     if (select.value === "__nova__") {
@@ -43,7 +46,7 @@ function initNovoJogoBtn() {
 function esconderLoadingTrap() {
   const loadingScreen = document.getElementById("blLoadingScreen");
   if (loadingScreen) {
-    loadingScreen.classList.add("bl-hide"); // Dispara o fade-out do CSS
+    loadingScreen.classList.add("bl-hide"); 
   }
 }
 
@@ -54,7 +57,7 @@ function init() {
 
   console.log("Conectando ao Firebase...");
 
-  db.ref("bests_league").once("value")
+  db.ref(window.FIREBASE_DB_PATH).once("value")
     .then((snapshot) => {
       const firebaseData = snapshot.val();
 
@@ -65,7 +68,7 @@ function init() {
       } else {
         console.log("Nuvem vazia. Iniciando migração do localStorage local...");
         appState = loadAppState() || { temporadaVisualizadaId: "temp_1", temporadas: [] };
-        db.ref("bests_league").set(appState);
+        db.ref(window.FIREBASE_DB_PATH).set(appState);
       }
 
       if (typeof temporadaEmAndamento === "function") {
@@ -87,7 +90,6 @@ function init() {
       
       renderAll();
       
-      // 🔥 CASO DÊ ERRO/OFFLINE: Libera a tela de qualquer forma com o backup local
       esconderLoadingTrap();
     });
 }

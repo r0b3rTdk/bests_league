@@ -17,4 +17,15 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 
 // Expõe a referência do Realtime Database para os outros arquivos usarem
+// ... código de inicialização do Firebase acima ...
 const db = firebase.database();
+
+// detectar se você está rodando no seu PC
+const isLocal = window.location.hostname === "localhost" || 
+                window.location.hostname === "127.0.0.1" || 
+                window.location.protocol === "file:";
+
+// define o nome da tabela/pasta baseado em onde o site está abrindo
+window.FIREBASE_DB_PATH = isLocal ? "bests_league_dev" : "bests_league";
+
+console.log(`📡 Modo de conexão ativo: [${window.FIREBASE_DB_PATH}]`);

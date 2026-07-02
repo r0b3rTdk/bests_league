@@ -2,8 +2,6 @@
 // BESTS LEAGUE — cabeçalho de temporada, hero/placar e barra de confronto
 // ============================================================
 
-// ---------- HEADER: seletor de temporada ----------
-
 function renderTemporadaHeader() {
   const temp = temporadaVisualizada();
   const emAndamento = temporadaEmAndamento();
@@ -16,19 +14,26 @@ function renderTemporadaHeader() {
   select.innerHTML = html;
 }
 
-// ---------- HERO ----------
-
 function renderHero() {
   const temp = temporadaVisualizada();
-  const jogosComData = jogosOrdenados(temp).filter((j) => j.date);
-  const ultimo = jogosComData.length ? jogosComData[jogosComData.length - 1] : null;
+  const ehArquivada = temp && (temp.arquivadaEm || temp.nome.toLowerCase().includes("arquivada"));
   const heroSection = document.getElementById("heroSection");
-  if (!ultimo) {
-    heroSection.style.display = "none";
+  
+  if (ehArquivada) {
+    if (heroSection) heroSection.style.display = "none";
     return;
   }
-  heroSection.style.display = "";
-  document.getElementById("heroScoreboard").innerHTML = scoreboardHtml(temp, ultimo, true);
+
+  const jogosComData = jogosOrdenados(temp).filter((j) => j.date);
+  const ultimo = jogosComData.length ? jogosComData[jogosComData.length - 1] : null;
+  if (!ultimo) {
+    if (heroSection) heroSection.style.display = "none";
+    return;
+  }
+  if (heroSection) {
+    heroSection.style.display = "";
+    document.getElementById("heroScoreboard").innerHTML = scoreboardHtml(temp, ultimo, true);
+  }
 }
 
 function scoreboardHtml(temp, jogo, destaque) {
@@ -57,40 +62,20 @@ function scoreboardHtml(temp, jogo, destaque) {
   `;
 }
 
-// ---------- BARRA DE CONFRONTO ----------
-
 function renderConfrontoBar() {
   const temp = temporadaVisualizada();
-  const c = calcularConfronto(temp);
-  document.getElementById("confrontoBar").innerHTML = `
-    <div class="bl-confronto-row">
-      <div class="bl-confronto-item">
-        <span class="bl-confronto-num" style="color:var(--bl-timeA)">${c.vitoriasA}</span>
-        <span class="bl-confronto-lbl">vitórias ${escapeHtml(temp.timeA.nome.toLowerCase())}</span>
-      </div>
-      <div class="bl-confronto-item">
-        <span class="bl-confronto-num">${c.empates}</span>
-        <span class="bl-confronto-lbl">empates</span>
-      </div>
-      <div class="bl-confronto-item">
-        <span class="bl-confronto-num" style="color:#cfcfcf">${c.vitoriasB}</span>
-        <span class="bl-confronto-lbl">vitórias ${escapeHtml(temp.timeB.nome.toLowerCase())}</span>
-      </div>
-    </div>
-    <div class="bl-confronto-divider-h"></div>
-    <div class="bl-confronto-row">
-      <div class="bl-confronto-item">
-        <span class="bl-confronto-num">${c.jogosValidos}</span>
-        <span class="bl-confronto-lbl">jogos disputados</span>
-      </div>
-      <div class="bl-confronto-item">
-        <span class="bl-confronto-num">${c.totalGols}</span>
-        <span class="bl-confronto-lbl">gols na temporada</span>
-      </div>
-      <div class="bl-confronto-item">
-        <span class="bl-confronto-num">${c.mediaGolsPorJogo.toFixed(1)}</span>
-        <span class="bl-confronto-lbl">média de gols/jogo</span>
-      </div>
-    </div>
-  `;
+  const confrontoBarEl = document.getElementById("confrontoBar");
+  if (!confrontoBarEl) return;
+
+  // Se a temporada for arquivada, o controle é do Hall of Fame, então esconde aqui
+  const ehArquivada = temp && temp.arquivadaEm !== null && temp.arquivadaEm !== undefined && temp.arquivadaEm !== "";
+  if (ehArquivada) {
+    confrontoBarEl.style.display = "none";
+    confrontoBarEl.innerHTML = "";
+    return;
+  }
+
+  // Garante que a barra apareça e injeta o bloco premium centralizado
+  confrontoBarEl.style.display = "block";
+  confrontoBarEl.innerHTML = typeof renderBlocoEstatisticas === "function" ? renderBlocoEstatisticas(temp) : "";
 }

@@ -229,17 +229,22 @@ function closeJogoModal() {
 function handleSaveJogo(jogo, isNew) {
   const temp = temporadaVisualizada(); 
   
+  if (!temp.jogos) temp.jogos = []; 
+  
   const existe = temp.jogos.some((j) => j.id === jogo.id);
   if (existe) temp.jogos = temp.jogos.map((j) => (j.id === jogo.id ? jogo : j));
   else temp.jogos.push(jogo);
   
-  saveAppState(); // O jogo.js já chama o salvamento automático aqui!
+  saveAppState(); 
   renderAll();
   showToast(isNew ? "Jogo adicionado" : "Jogo atualizado");
 }
 
 function handleDeleteJogo(id) {
   const temp = temporadaVisualizada();
+  
+  if (!temp.jogos) temp.jogos = [];
+  
   temp.jogos = temp.jogos.filter((j) => j.id !== id);
   saveAppState();
   renderAll();
