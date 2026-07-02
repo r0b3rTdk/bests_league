@@ -57,8 +57,26 @@ function renderAll() {
       const cGolsContra = resCampeao.ehTimeACampeao ? resCampeao.gcA : resCampeao.gcB;
       const cAproveitamento = totalJogos > 0 ? (((cVitorias * 3 + resCampeao.emp) / (totalJogos * 3)) * 100).toFixed(1) : "0.0";
 
-      // Injeta o Banner do Campeão E as Estatísticas juntos no HERO (Topo)
+      // Injeta o código com um estilo extra focado em telas pequenas (Celular)
       heroSec.innerHTML = `
+        <style>
+          @media (max-width: 480px) {
+            .bl-champ-stats-grid {
+              grid-template-columns: repeat(2, 1fr) !important;
+              gap: 0.4rem !important;
+            }
+            .bl-stat-card {
+              padding: 0.5rem 0.2rem !important;
+            }
+            .bl-stat-card span {
+              font-size: 1.05rem !important; /* Encolhe o texto para o "9V-6E-8D" caber em uma linha só */
+            }
+            .bl-stat-card label {
+              font-size: 0.55rem !important;
+            }
+          }
+        </style>
+
         <div class="bl-hero" style="margin-bottom: 15px;">
           <div class="bl-champion-banner" style="--team-color: ${timeCampeao.cor || '#ffd700'}; margin-bottom: 15px; padding: 1.8rem 1.5rem;">
             <div class="bl-trophy-sticker">🏆</div>
@@ -216,53 +234,61 @@ function showToast(msg, isError) {
 
 function renderBlocoEstatisticas(temp) {
   const res = descobrirTimeCampeaoObjeto(temp);
-  
-  // 🔹 CORREÇÃO DE ORDENAÇÃO: Garante a ordem cronológica real dos jogos antes de filtrar
   const jogosCronologicos = typeof jogosOrdenados === "function" ? jogosOrdenados(temp) : (temp.jogos || []);
   const jogosValidos = jogosCronologicos.filter(j => j.placarA !== null && j.placarB !== null);
   const totalJogos = jogosValidos.length;
-  
-  // Captura o último jogo real disputado da temporada
   const ultimoJogo = totalJogos > 0 ? jogosValidos[totalJogos - 1] : null;
 
   let estiloColA = "flex: 1; text-align: left; padding: 12px 20px; border-radius: 12px; transition: all 0.3s ease;";
   let estiloColB = "flex: 1; text-align: right; padding: 12px 20px; border-radius: 12px; transition: all 0.3s ease;";
-  let estiloEmpatePill = "background: #2a2a2a; padding: 12px 28px; border-radius: 12px; text-align: center; margin: 0 20px; min-width: 120px; transition: all 0.3s ease;";
+  let estiloEmpatePill = "background: #2a2a2a; padding: 12px 28px; border-radius: 12px; text-align: center; margin: 0 20px; min-width: 120px;";
 
-  // Aplica a pílula cinza no lado oposto ao vencedor do último confronto
   if (ultimoJogo) {
-    if (ultimoJogo.placarA < ultimoJogo.placarB) {
-      // Vitória do Branco (A) ➔ Pílula cinza vai para cima do PRETO (B)
-      estiloColB = "flex: 1; text-align: right; background: #2a2a2a; padding: 12px 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.02); transition: all 0.3s ease;";
-      estiloEmpatePill = "padding: 12px 28px; text-align: center; margin: 0 20px; min-width: 120px; transition: all 0.3s ease;";
-    } else if (ultimoJogo.placarB < ultimoJogo.placarA) {
-      // Vitória do Preto (B) ➔ Pílula cinza vai para cima do BRANCO (A)
-      estiloColA = "flex: 1; text-align: left; background: #2a2a2a; padding: 12px 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.02); transition: all 0.3s ease;";
-      estiloEmpatePill = "padding: 12px 28px; text-align: center; margin: 0 20px; min-width: 120px; transition: all 0.3s ease;";
+    if (ultimoJogo.placarA > ultimoJogo.placarB) {
+      estiloColB = "flex: 1; text-align: right; background: #2a2a2a; padding: 12px 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.02);";
+      estiloEmpatePill = "padding: 12px 28px; text-align: center; margin: 0 20px; min-width: 120px;";
+    } else if (ultimoJogo.placarB > ultimoJogo.placarA) {
+      estiloColA = "flex: 1; text-align: left; background: #2a2a2a; padding: 12px 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.02);";
+      estiloEmpatePill = "padding: 12px 28px; text-align: center; margin: 0 20px; min-width: 120px;";
     }
   }
 
   return `
+    <style>
+      @media (max-width: 480px) {
+        .bl-estatisticas-grid-top {
+          display: grid !important;
+          grid-template-columns: repeat(3, 1fr) !important; /* Força 3 colunas milimetricamente iguais */
+          align-items: center !important;
+          gap: 6px !important;
+          width: 100% !important;
+          box-sizing: border-box !important;
+        }
+        .bl-estatisticas-grid-top > div {
+          margin: 0 !important;
+          min-width: 0 !important;          /* Destrava os 120px que o Safari congelava */
+          flex: none !important;             /* O SEGREDO PRO SAFARI: Desliga o flex:1 antigo */
+          padding: 8px 2px !important;       /* Ajusta o espaçamento interno pro texto não espremer */
+          text-align: center !important;     /* Centraliza tudo */
+          box-sizing: border-box !important; /* Garante que o padding não aumente o tamanho do bloco */
+        }
+      }
+    </style>
+
     <div class="bl-estatisticas-container">
-      <div class="bl-estatisticas-titulo">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/></svg>
-        ESTATÍSTICAS DA TEMPORADA
-      </div>
+      <div class="bl-estatisticas-titulo"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/></svg>ESTATÍSTICAS DA TEMPORADA</div>
       
       <div class="bl-estatisticas-grid-top">
-        <!-- ⚪ Lado do Time A (Branco) -->
         <div style="${estiloColA}">
           <div class="bl-stat-valor">${res.vitA}</div>
           <div class="bl-stat-label">VITÓRIAS ${escapeHtml(temp.timeA.nome).toUpperCase()}</div>
         </div>
         
-        <!-- 🤝 Centro (Empates) -->
         <div style="${estiloEmpatePill}">
           <div style="font-family:'Impact',sans-serif; font-size: 1.6rem; color: var(--bl-gold-light); line-height: 1;">${res.emp}</div>
-          <div style="font-size: 0.65rem; color: #BBB; text-transform: uppercase; letter-spacing: 1px; margin-top: 5px; font-weight: 600;">EMPATES</div>
+          <div class="bl-stat-label" style="margin-top:5px; font-weight:600;">EMPATES</div>
         </div>
 
-        <!-- ⚫ Lado do Time B (Preto) -->
         <div style="${estiloColB}">
           <div class="bl-stat-valor">${res.vitB}</div>
           <div class="bl-stat-label">VITÓRIAS ${escapeHtml(temp.timeB.nome).toUpperCase()}</div>
