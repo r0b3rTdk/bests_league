@@ -29,7 +29,14 @@ function renderInicio() {
   const craques = calcularCraques(temp);
   const lider = artilharia[0];
   const liderCraque = craques[0];
-  const ultimos5 = jogosOrdenados(temp).slice(-5).reverse();
+
+  // Mistura os últimos jogos já disputados com os próximos agendados,
+  // em ordem cronológica (passado no topo, futuro embaixo) — assim o
+  // card mostra de verdade "próximos E últimos jogos", não só resultado.
+  const todosOrdenados = jogosOrdenados(temp);
+  const jogados = todosOrdenados.filter((j) => j.placarA !== null && j.placarA !== undefined);
+  const agendados = todosOrdenados.filter((j) => j.placarA === null || j.placarA === undefined);
+  const listaExibida = [...jogados.slice(-3), ...agendados.slice(0, 2)];
 
   let html = `
     <div class="bl-grid-2">
@@ -60,18 +67,25 @@ function renderInicio() {
       <div class="bl-card bl-card-wide">
         <h3 class="bl-card-title">${ICONS.calendar.replace('width="32" height="32"', 'width="16" height="16"')} Próximos e últimos jogos</h3>
         <div class="bl-mini-jogos">
-          ${ultimos5.length === 0 ? emptyStateHtml(ICONS.calendar, "Nenhum jogo cadastrado", "Clique em Novo jogo para começar") :
-            ultimos5.map((j) => `
-              <button type="button" class="bl-mini-jogo" data-edit-jogo="${j.id}">
+          ${listaExibida.length === 0 ? emptyStateHtml(ICONS.calendar, "Nenhum jogo cadastrado", "Clique em Novo jogo para começar") :
+            listaExibida.map((j) => {
+              const agendado = j.placarA === null || j.placarA === undefined;
+              return `
+              <button type="button" class="bl-mini-jogo ${agendado ? 'bl-mini-jogo-agendado' : ''}" data-edit-jogo="${j.id}">
                 <span class="bl-mini-jogo-data">${formatDateBR(j.date)}</span>
-                <span class="bl-mini-jogo-placar">
-                  <strong style="color:var(--bl-timeA)">${j.placarA}</strong>
-                  <span class="bl-mini-x">×</span>
-                  <strong style="color:#cfcfcf">${j.placarB}</strong>
-                </span>
+                ${agendado ? `
+                  <span class="bl-mini-jogo-placar"><span class="bl-tag-agendado">AGENDADO</span></span>
+                ` : `
+                  <span class="bl-mini-jogo-placar">
+                    <strong style="color:var(--bl-timeA)">${j.placarA}</strong>
+                    <span class="bl-mini-x">×</span>
+                    <strong style="color:#cfcfcf">${j.placarB}</strong>
+                  </span>
+                `}
                 ${j.craque ? `<span class="bl-mini-jogo-craque">${starIcon(10, true)} ${escapeHtml(j.craque)}</span>` : ""}
               </button>
-            `).join("")
+            `;
+            }).join("")
           }
         </div>
       </div>
@@ -84,8 +98,7 @@ function renderInicio() {
 
 function renderCalendario() {
   const temp = temporadaVisualizada();
-  const jogos = jogosOrdenados(temp);
-  
+  const jogos = jogosOrdenados(temp).filter(j => j.placarA !== null && j.placarA !== undefined);  
   // Sincroniza se é admin
   const adminToken = window.localStorage.getItem("bl_admin_token");
   const isAdmin = adminToken === "PELADA_ADMIN_2026";
@@ -114,14 +127,14 @@ function renderCalendario() {
               const vitoriaA = !semPlacar && j.placarA > j.placarB;
               const vitoriaB = !semPlacar && j.placarB > j.placarA;
               return `
-              <tr>
+              <tr class="${semPlacar ? 'bl-row-agendado' : ''}">
                 <td>${formatDateBR(j.date)}</td>
                 <td class="bl-td-muted">${escapeHtml(j.time || "")}</td>
                 <td style="text-align:right;" class="bl-td-time bl-td-timeA ${vitoriaA ? 'bl-row-vencedor' : ''}">
                   ${vitoriaA ? '🏆 ' : ''}${escapeHtml(temp.timeA.nome)}
                 </td>
                 <td class="bl-td-placar" style="font-weight:${semPlacar ? '400' : '700'};">
-                  ${j.placarA} <span class="bl-td-x">×</span> ${j.placarB}
+                  ${semPlacar ? `<span class="bl-tag-agendado">AGENDADO</span>` : `${j.placarA} <span class="bl-td-x">×</span> ${j.placarB}`}
                 </td>
                 <td style="text-align:left;" class="bl-td-time bl-td-timeB ${vitoriaB ? 'bl-row-vencedor' : ''}">
                   ${escapeHtml(temp.timeB.nome)}${vitoriaB ? ' 🏆' : ''}
@@ -149,13 +162,62 @@ function renderCalendario() {
   `;
 }
 
+// Monta o pódio (top 3) de qualquer ranking já ordenado (artilharia ou craques).
+// entradas: [{ jogador, time, valor }] já em ordem decrescente.
+function podiumHtml(entradas, temp, sufixoValor) {
+  const medalhas = ["🥇", "🥈", "🥉"];
+  const top3 = entradas.slice(0, 3).filter((e) => e && e.valor > 0);
+  if (top3.length === 0) return "";
+  const jogadores = temp && temp.jogadores ? temp.jogadores : [];
+
+  return `
+    <div class="bl-podium">
+      ${top3.map((e, i) => {
+        const jogadorObj = jogadores.find((p) => p.nome === e.jogador) || { nome: e.jogador };
+        const cor = e.time === TIME_A ? ((temp.timeA && temp.timeA.cor) || "#F2EFE6")
+          : e.time === TIME_B ? ((temp.timeB && temp.timeB.cor) || "#1a1a1a")
+          : "#5B7DFF";
+        return `
+          <div class="bl-podium-step bl-podium-${i + 1}">
+            <div class="bl-podium-medal">${medalhas[i]}</div>
+            <div class="bl-podium-avatar">${avatarHtml(jogadorObj, i === 0 ? 68 : 54, cor)}</div>
+            <div class="bl-podium-nome">${escapeHtml(e.jogador)}</div>
+            <div class="bl-podium-valor"><span data-count-final="${e.valor}">${e.valor}</span>${sufixoValor || ""}</div>
+            <div class="bl-podium-bloco">${i + 1}</div>
+          </div>
+        `;
+      }).join("")}
+    </div>
+  `;
+}
+
+let rankingModoAno = false; // false = só este turno, true = ano inteiro (todos os turnos)
+
+// Toolbar "Este turno / Ano inteiro" — só aparece quando faz sentido
+// (quando já existe mais de um turno cadastrado pro mesmo ano).
+function toggleRankingAnoHtml(tempOriginal) {
+  const todas = typeof temporadasDoMesmoAno === "function" ? temporadasDoMesmoAno(tempOriginal) : [tempOriginal];
+  if (todas.length <= 1) return "";
+  return `
+    <div class="bl-toggle-group" style="margin-bottom: 16px;">
+      <button type="button" class="bl-btn-toggle ${!rankingModoAno ? 'active' : ''}" data-ranking-modo="turno">Este turno</button>
+      <button type="button" class="bl-btn-toggle ${rankingModoAno ? 'active' : ''}" data-ranking-modo="ano">Ano inteiro</button>
+    </div>
+  `;
+}
+
 function renderArtilharia() {
-  const temp = temporadaVisualizada();
+  const tempOriginal = temporadaVisualizada();
+  const temp = rankingModoAno && typeof mesclarTemporadasDoAno === "function" ? mesclarTemporadasDoAno(tempOriginal) : tempOriginal;
+  const toggle = toggleRankingAnoHtml(tempOriginal);
   const artilharia = calcularArtilharia(temp);
   if (artilharia.length === 0) {
-    return `<div class="bl-card">${emptyStateHtml(ICONS.goal, "Nenhum gol registrado", "Cadastre jogos com os gols de cada jogador")}</div>`;
+    return `${toggle}<div class="bl-card">${emptyStateHtml(ICONS.goal, "Nenhum gol registrado", "Cadastre jogos com os gols de cada jogador")}</div>`;
   }
+  const podio = podiumHtml(artilharia.map((a) => ({ jogador: a.jogador, time: a.time, valor: a.gols })), temp, "");
   return `
+    ${toggle}
+    ${podio}
     <div class="bl-card">
       <div class="bl-table-wrap">
         <table class="bl-table">
@@ -204,12 +266,21 @@ function renderDisciplina() {
 }
 
 function renderCraques() {
-  const temp = temporadaVisualizada();
+  const tempOriginal = temporadaVisualizada();
+  const temp = rankingModoAno && typeof mesclarTemporadasDoAno === "function" ? mesclarTemporadasDoAno(tempOriginal) : tempOriginal;
+  const toggle = toggleRankingAnoHtml(tempOriginal);
   const craques = calcularCraques(temp);
   if (craques.length === 0) {
-    return `<div class="bl-card">${emptyStateHtml(ICONS.star, "Nenhum craque eleito ainda", "Marque o destaque ao cadastrar cada jogo")}</div>`;
+    return `${toggle}<div class="bl-card">${emptyStateHtml(ICONS.star, "Nenhum craque eleito ainda", "Marque o destaque ao cadastrar cada jogo")}</div>`;
   }
+  const jogadores = temp && temp.jogadores ? temp.jogadores : [];
+  const podio = podiumHtml(craques.map((c) => {
+    const jog = jogadores.find((p) => p.nome === c.jogador);
+    return { jogador: c.jogador, time: jog ? jog.time : null, valor: c.vezes };
+  }), temp, "×");
   return `
+    ${toggle}
+    ${podio}
     <div class="bl-card">
       <div class="bl-table-wrap">
         <table class="bl-table">

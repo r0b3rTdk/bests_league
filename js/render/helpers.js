@@ -35,6 +35,41 @@ function timeClasse(time) {
   return "avulso";
 }
 
+// ============================================================
+// ANIMAÇÃO — contador numérico (estatísticas, pódio) sobe de 0 até o
+// valor final, respeitando prefers-reduced-motion.
+// ============================================================
+function animarNumero(elemento, valorFinal, duracaoMs) {
+  if (!elemento) return;
+  const reduzMovimento = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const destino = parseFloat(valorFinal);
+  if (isNaN(destino)) { elemento.textContent = "0"; return; } // nunca mostra "NaN" literal
+  if (reduzMovimento) { elemento.textContent = valorFinal; return; }
+
+  duracaoMs = duracaoMs || 900;
+  const ehDecimal = String(valorFinal).includes(".");
+  const inicio = performance.now();
+
+  function passo(agora) {
+    const progresso = Math.min((agora - inicio) / duracaoMs, 1);
+    const facilitado = 1 - Math.pow(1 - progresso, 3); // ease-out cúbico
+    const atual = destino * facilitado;
+    elemento.textContent = ehDecimal ? atual.toFixed(1) : Math.round(atual);
+    if (progresso < 1) requestAnimationFrame(passo);
+    else elemento.textContent = valorFinal;
+  }
+  requestAnimationFrame(passo);
+}
+
+// Procura todo elemento com [data-count-final] dentro do container e
+// anima cada um a partir de 0 — usar logo após inserir um innerHTML novo.
+function animarContadoresEm(container) {
+  if (!container) return;
+  container.querySelectorAll("[data-count-final]").forEach((el) => {
+    animarNumero(el, el.getAttribute("data-count-final"));
+  });
+}
+
 function crestHtml(temp, time, size) {
   size = size || 28;
   let cor, borda;
@@ -42,6 +77,47 @@ function crestHtml(temp, time, size) {
   else if (time === TIME_B) { cor = temp.timeB.cor; borda = "1.5px solid #4a4a4a"; }
   else { cor = "#5B7DFF"; borda = "1.5px solid #16299e"; }
   return `<span class="bl-crest" style="width:${size}px;height:${size}px;background:${cor};border:${borda};"></span>`;
+}
+
+// ============================================================
+// CAPITÃES — descoberta do capitão de um time + avatar (foto ou inicial)
+// ============================================================
+
+// Retorna o jogador marcado como capitão de um time. Se ninguém foi
+// marcado explicitamente ainda, cai de volta pro artilheiro do time
+// (depois maior overall, depois ordem alfabética) — assim o hero e os
+// cards nunca ficam vazios antes do admin escolher um capitão de fato.
+function capitaoDoTime(temp, time) {
+  const jogadores = (temp && temp.jogadores ? temp.jogadores : []).filter((j) => j.time === time);
+  if (jogadores.length === 0) return null;
+  const marcado = jogadores.find((j) => j.capitao === true);
+  if (marcado) return marcado;
+
+  const golsPorNome = {};
+  if (typeof calcularArtilharia === "function") {
+    calcularArtilharia(temp).forEach((a) => { golsPorNome[a.jogador] = a.gols; });
+  }
+  return [...jogadores].sort((a, b) => {
+    const golsA = golsPorNome[a.nome] || 0;
+    const golsB = golsPorNome[b.nome] || 0;
+    return golsB - golsA || (b.overall || 0) - (a.overall || 0) || a.nome.localeCompare(b.nome);
+  })[0];
+}
+
+// Avatar redondo de um jogador: mostra a foto cadastrada (se houver) com
+// fallback automático pra inicial do nome — cobre link quebrado também.
+function avatarHtml(jogador, size, corAnel, extraClass) {
+  size = size || 64;
+  const nome = jogador && jogador.nome ? jogador.nome : "";
+  const inicial = nome.trim().charAt(0).toUpperCase() || "?";
+  const foto = jogador && jogador.foto ? jogador.foto : "";
+  const fontSize = Math.round(size * 0.4);
+  return `
+    <div class="bl-avatar ${extraClass || ''}" style="width:${size}px;height:${size}px;border-color:${corAnel};background:${corAnel}26;color:${corAnel};font-size:${fontSize}px;">
+      <span class="bl-avatar-inicial">${escapeHtml(inicial)}</span>
+      ${foto ? `<img class="bl-avatar-img" src="${escapeHtml(foto)}" alt="${escapeHtml(nome)}" onerror="this.remove();" />` : ""}
+    </div>
+  `;
 }
 
 function starIcon(size, filled) {

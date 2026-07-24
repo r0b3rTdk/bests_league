@@ -54,6 +54,7 @@ function init() {
   initTabs();
   initTemporadaSelect();
   initNovoJogoBtn();
+  if (typeof initFutCardTilt === "function") initFutCardTilt();
 
   console.log("Conectando ao Firebase...");
 
@@ -75,10 +76,10 @@ function init() {
         appState.temporadaVisualizadaId = temporadaEmAndamento().id;
       }
 
+      const jogosAgendadosAgora = manterAgendaEmDia();
       renderAll();
-      
-      // 🔥 BANCO CARREGADO COM SUCESSO: Desliga o loading!
       esconderLoadingTrap();
+      avisarAgendaAtualizada(jogosAgendadosAgora);
     })
     .catch((error) => {
       console.error("Erro crítico ao sincronizar com Firebase, usando dados locais offline:", error);
@@ -88,10 +89,39 @@ function init() {
         appState.temporadaVisualizadaId = temporadaEmAndamento().id;
       }
       
+      const jogosAgendadosAgora = manterAgendaEmDia();
       renderAll();
-      
       esconderLoadingTrap();
+      avisarAgendaAtualizada(jogosAgendadosAgora);
     });
+}
+
+// Só o admin gera/edita dados — visitantes comuns só leem. Garante
+// (silenciosamente, sem duplicar) que exista o PRÓXIMO jogo agendado
+// na temporada em andamento — nunca uma lista inteira de sextas.
+// Roda ANTES do primeiro renderAll(), pra tela já nascer em dia.
+function manterAgendaEmDia() {
+  if (!window.isAdmin) return 0;
+  if (typeof garantirProximoJogoAgendado !== "function" || typeof temporadaEmAndamento !== "function") return 0;
+  try {
+    const ativa = temporadaEmAndamento();
+    const criados = garantirProximoJogoAgendado(ativa);
+    saveAppState();
+    return criados;
+  } catch (e) {
+    console.warn("Não foi possível atualizar a agenda automática:", e);
+    return 0;
+  }
+}
+
+// Aviso (opcional, só quando algo mudou) depois que a tela de loading
+// já sumiu, pra não passar despercebido atrás da animação de entrada.
+function avisarAgendaAtualizada(criados) {
+  if (!criados || criados <= 0) return;
+  if (typeof showToast !== "function") return;
+  setTimeout(() => {
+    showToast("Próximo jogo já está agendado");
+  }, 500);
 }
 
 document.addEventListener("DOMContentLoaded", init);

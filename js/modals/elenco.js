@@ -16,9 +16,15 @@ function renderElencoListHtml() {
       starsHtml += `<span data-star="${i}" style="color:${i <= ov ? '#D4AF37' : 'rgba(255,255,255,0.2)'};">★</span>`;
     }
     starsHtml += '</div>';
-    
+
+    const corTime = j.time === TIME_A ? (temp.timeA.cor || "#fff") : j.time === TIME_B ? (temp.timeB.cor || "#1a1a1a") : "#5B7DFF";
+    const ehCapitao = j.capitao === true;
+
     return `
       <div class="bl-jogador-row" data-id="${j.id}">
+        <button type="button" class="bl-avatar-edit-btn" data-editar-foto="${j.id}" title="Enviar foto (aparece no card e no hero)" aria-label="Enviar foto de ${escapeHtml(j.nome)}">
+          ${avatarHtml(j, 30, corTime)}
+        </button>
         <select class="bl-select-inline-time" title="Mudar time">
           <option value="${TIME_A}" ${j.time === TIME_A ? 'selected' : ''}>${escapeHtml(temp.timeA.nome.substring(0,3))}</option>
           <option value="${TIME_B}" ${j.time === TIME_B ? 'selected' : ''}>${escapeHtml(temp.timeB.nome.substring(0,3))}</option>
@@ -26,6 +32,7 @@ function renderElencoListHtml() {
         </select>
         <input type="text" class="bl-input-inline-nome" value="${escapeHtml(j.nome)}" placeholder="Nome" />
         ${starsHtml}
+        <button type="button" class="bl-iconbtn bl-capitao-toggle ${ehCapitao ? 'bl-capitao-ativo' : ''}" data-toggle-capitao="${j.id}" title="${ehCapitao ? 'Capitão do time — clique para remover' : 'Definir como capitão do time'}" aria-label="Capitão">C</button>
         <button type="button" class="bl-iconbtn bl-iconbtn-danger" data-remove-jogador="${j.id}" aria-label="Remover ${escapeHtml(j.nome)}">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
         </button>
@@ -89,7 +96,7 @@ function openElencoModal() {
     const nome = nomeInput.value.trim().toUpperCase();
     if (!nome) return;
     const time = document.getElementById("fNovoJogadorTime").value;
-    handleAddJogador({ id: uid("j"), nome, time, overall: novoJogadorOverall });
+    handleAddJogador({ id: uid("j"), nome, time, overall: novoJogadorOverall, capitao: false, foto: "" });
     document.getElementById("jogadoresList").innerHTML = renderElencoListHtml();
     attachElencoListListeners();
     nomeInput.value = "";
@@ -130,6 +137,16 @@ function attachElencoListListeners() {
       document.getElementById("jogadoresList").innerHTML = renderElencoListHtml();
       attachElencoListListeners();
     });
+  });
+
+  // 1b. Alternar capitão do time (só um capitão por time — marcar um desmarca o anterior)
+  document.querySelectorAll("[data-toggle-capitao]").forEach((el) => {
+    el.addEventListener("click", () => handleSetCapitao(el.getAttribute("data-toggle-capitao")));
+  });
+
+  // 1c. Definir/editar a foto do jogador (URL) — usada no hero e no pódio
+  document.querySelectorAll("[data-editar-foto]").forEach((el) => {
+    el.addEventListener("click", () => handleSetFoto(el.getAttribute("data-editar-foto")));
   });
 
   // 2. Mudar estrelas (Overall) dinamicamente clicando nelas
@@ -216,4 +233,49 @@ function handleRemoveJogador(id) {
   const temp = temporadaVisualizada();
   temp.jogadores = temp.jogadores.filter((j) => j.id !== id);
   saveAppState();
+}
+
+// Só existe 1 capitão por time: marcar um jogador desmarca automaticamente
+// quem era capitão antes dele no mesmo time. Aparece no hero de confronto.
+function handleSetCapitao(id) {
+  const temp = temporadaVisualizada();
+  const jogador = temp.jogadores.find((j) => j.id === id);
+  if (!jogador) return;
+
+  const jaEraCapitao = jogador.capitao === true;
+  temp.jogadores.forEach((j) => { if (j.time === jogador.time) j.capitao = false; });
+  jogador.capitao = !jaEraCapitao;
+
+  saveAppState();
+  document.getElementById("jogadoresList").innerHTML = renderElencoListHtml();
+  attachElencoListListeners();
+  showToast(jogador.capitao ? `${jogador.nome} agora é o capitão` : `${jogador.nome} não é mais capitão`);
+}
+
+// Foto do jogador — define a foto colando uma URL (link) direta.
+// Usado para manter o banco de dados leve e o carregamento rápido!
+function handleSetFoto(id) {
+  const temp = temporadaVisualizada();
+  const jogador = temp.jogadores.find((j) => j.id === id);
+  if (!jogador) return;
+
+  // Abre uma caixinha simples perguntando o link da foto
+  const url = prompt(`Cole o LINK (URL) da foto de ${jogador.nome}:\n(Deixe vazio e dê OK para remover a foto atual)`, jogador.foto || "");
+  
+  // Se o usuário clicar em "Cancelar", a gente ignora e não faz nada
+  if (url === null) return; 
+
+  // Salva o link diretamente no jogador
+  jogador.foto = url.trim();
+  saveAppState();
+  
+  // Atualiza o modal e as listas de jogadores para a foto nova já aparecer
+  document.getElementById("jogadoresList").innerHTML = renderElencoListHtml();
+  attachElencoListListeners();
+  
+  showToast(jogador.foto ? `Foto de ${jogador.nome} atualizada!` : `Foto de ${jogador.nome} removida!`);
+  
+  // Atualiza as cartas lá no fundo, se for o caso
+  if (typeof renderTabContentOnly === "function") renderTabContentOnly();
+  if (typeof renderHero === "function") renderHero();
 }

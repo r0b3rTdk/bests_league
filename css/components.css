@@ -91,6 +91,25 @@
 .bl-craque-tag { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; color: var(--bl-gold-light); font-weight: 600; }
 .bl-row-actions { display: flex; gap: 4px; justify-content: flex-end; }
 
+/* Jogo agendado (placar ainda em branco) — tag + linha/card discretos */
+.bl-tag-agendado {
+  display: inline-block;
+  font-family: 'Oswald', sans-serif;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--bl-gold-light);
+  background: rgba(212, 175, 55, 0.1);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 20px;
+  padding: 3px 10px;
+}
+.bl-row-agendado td { opacity: 0.72; }
+.bl-row-agendado:hover td { opacity: 0.9; }
+.bl-mini-jogo-agendado { opacity: 0.8; }
+.bl-mini-jogo-agendado:hover { opacity: 1; }
+.bl-mini-jogo-agendado .bl-mini-jogo-placar { min-width: 0; }
+
 /* PILLS */
 .bl-pills { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 18px; min-height: 4px; }
 .bl-pill {
@@ -129,19 +148,22 @@
   align-items: center;
   gap: 6px;
   border: 1px solid transparent;
-  transition: filter 0.12s ease, transform 0.05s ease;
+  transition: filter 0.15s ease, transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.15s ease;
   text-transform: uppercase;
 }
 .bl-btn-primary { background: linear-gradient(135deg, var(--bl-gold-light), var(--bl-gold)); color: #1a1305; }
-.bl-btn-primary:hover { filter: brightness(1.08); }
-.bl-btn-primary:active { transform: scale(0.98); }
+.bl-btn-primary:hover { filter: brightness(1.08); transform: translateY(-2px); box-shadow: 0 6px 16px -4px rgba(212,175,55,0.5); }
+.bl-btn-primary:active { transform: scale(0.97) translateY(0); }
 .bl-btn-secondary { background: transparent; border-color: var(--bl-line-strong); color: var(--bl-text); }
-.bl-btn-secondary:hover { background: rgba(255,255,255,0.06); }
+.bl-btn-secondary:hover { background: rgba(255,255,255,0.06); transform: translateY(-2px); }
+.bl-btn-secondary:active { transform: scale(0.97) translateY(0); }
 .bl-btn-danger { background: var(--bl-red); color: #fff; }
-.bl-btn-danger:hover { filter: brightness(1.1); }
+.bl-btn-danger:hover { filter: brightness(1.1); transform: translateY(-2px); box-shadow: 0 6px 16px -4px rgba(212,59,46,0.5); }
+.bl-btn-danger:active { transform: scale(0.97) translateY(0); }
 
-.bl-iconbtn { background: none; border: none; color: var(--bl-text-faint); cursor: pointer; padding: 6px; border-radius: 5px; display: flex; align-items: center; justify-content: center; }
-.bl-iconbtn:hover { background: rgba(255,255,255,0.08); color: var(--bl-text); }
+.bl-iconbtn { background: none; border: none; color: var(--bl-text-faint); cursor: pointer; padding: 6px; border-radius: 5px; display: flex; align-items: center; justify-content: center; transition: background 0.15s ease, color 0.15s ease, transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.bl-iconbtn:hover { background: rgba(255,255,255,0.08); color: var(--bl-text); transform: scale(1.12); }
+.bl-iconbtn:active { transform: scale(0.94); }
 .bl-iconbtn-danger:hover { background: rgba(212,59,46,0.15); color: var(--bl-red); }
 
 /* OVERALL EM ESTRELAS */
@@ -159,9 +181,19 @@
   padding: 11px 18px; border-radius: 100px; font-size: 13.5px; font-weight: 500;
   display: flex; align-items: center; gap: 7px;
   box-shadow: 0 8px 24px rgba(0,0,0,0.5); z-index: 200;
+  animation: blToastIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+@keyframes blToastIn {
+  from { opacity: 0; transform: translate(-50%, 12px) scale(0.9); }
+  to { opacity: 1; transform: translate(-50%, 0) scale(1); }
 }
 .bl-toast svg { color: var(--bl-gold); }
 .bl-toast-erro { border-color: var(--bl-red); max-width: 360px; text-align: center; line-height: 1.4; }
+
+@media (prefers-reduced-motion: reduce) {
+  .bl-btn-primary, .bl-btn-secondary, .bl-btn-danger, .bl-iconbtn, .bl-toast { animation: none; transition: filter 0.1s ease; }
+  .bl-btn-primary:hover, .bl-btn-secondary:hover, .bl-btn-danger:hover, .bl-iconbtn:hover { transform: none; }
+}
 
 /* Grupo de Alternância de Abas de Jogadores (FUT Premium Style) */
 .bl-toggle-group {
@@ -346,5 +378,137 @@
 /* Ajuste para o clique */
 .bl-btn-voltar:active {
   transform: scale(0.98) translateX(-2px);
+}
+
+/* ============================================================
+   BESTS LEAGUE — Avatar de jogador (foto ou inicial)
+   Usado no hero de confronto, pódio e elenco.
+   ============================================================ */
+.bl-avatar {
+  position: relative;
+  border-radius: 50%;
+  border-style: solid;
+  border-width: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Oswald', sans-serif;
+  font-weight: 700;
+  overflow: hidden;
+  flex-shrink: 0;
+  background-clip: padding-box;
+}
+.bl-avatar-img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+.bl-avatar-inicial { line-height: 1; user-select: none; }
+
+/* ============================================================
+   BESTS LEAGUE — Pódio (Artilharia / Craque do jogo)
+   ============================================================ */
+.bl-podium {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 10px;
+  padding: 28px 12px 0;
+  margin-bottom: 28px;
+}
+.bl-podium-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 130px;
+  flex-shrink: 0;
+}
+.bl-podium-medal { font-size: 26px; margin-bottom: 8px; line-height: 1; }
+.bl-podium-avatar { margin-bottom: 10px; }
+.bl-podium-nome {
+  font-family: 'Oswald', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--bl-text);
+  text-align: center;
+  max-width: 122px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-bottom: 2px;
+}
+.bl-podium-valor {
+  font-family: 'Oswald', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 10px;
+}
+.bl-podium-bloco {
+  width: 100%;
+  border-radius: 8px 8px 0 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 8px;
+  font-family: 'Oswald', sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  position: relative;
+  overflow: hidden;
+  transform-origin: bottom;
+  animation: blPodiumRise 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes blPodiumRise {
+  from { transform: scaleY(0); opacity: 0; }
+  to { transform: scaleY(1); opacity: 1; }
+}
+.bl-podium-3 .bl-podium-bloco { animation-delay: 0.05s; }
+.bl-podium-2 .bl-podium-bloco { animation-delay: 0.22s; }
+.bl-podium-1 .bl-podium-bloco { animation-delay: 0.4s; }
+.bl-podium-step { animation: blFadeInUp 0.4s ease both; }
+.bl-podium-3 { animation-delay: 0s; }
+.bl-podium-2 { animation-delay: 0.16s; }
+.bl-podium-1 { animation-delay: 0.32s; }
+@keyframes blFadeInUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bl-podium-bloco, .bl-podium-step { animation: none; }
+}
+.bl-podium-bloco::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0.16), transparent 60%);
+}
+
+.bl-podium-1 .bl-podium-bloco { height: 96px; background: linear-gradient(160deg, #fff2b8, #d4af37 55%, #8a6d1f); color: #3a2e0a; box-shadow: 0 0 26px -4px rgba(212,175,55,0.65); }
+.bl-podium-2 .bl-podium-bloco { height: 70px; background: linear-gradient(160deg, #eef1f5, #a8b8c8 55%, #5c6b7a); color: #26303a; box-shadow: 0 0 18px -4px rgba(168,184,200,0.5); }
+.bl-podium-3 .bl-podium-bloco { height: 52px; background: linear-gradient(160deg, #e3ad81, #c8893a 55%, #6b430f); color: #2e1c07; box-shadow: 0 0 18px -4px rgba(200,137,58,0.5); }
+
+.bl-podium-1 .bl-podium-valor { color: var(--bl-gold-light); }
+.bl-podium-2 .bl-podium-valor { color: #cfd8e3; }
+.bl-podium-3 .bl-podium-valor { color: #d99c5f; }
+
+.bl-podium-1 .bl-podium-avatar .bl-avatar { box-shadow: 0 0 0 4px rgba(212,175,55,0.15), 0 0 20px -2px #d4af37; }
+.bl-podium-2 .bl-podium-avatar .bl-avatar { box-shadow: 0 0 0 4px rgba(168,184,200,0.15), 0 0 16px -2px #a8b8c8; }
+.bl-podium-3 .bl-podium-avatar .bl-avatar { box-shadow: 0 0 0 4px rgba(200,137,58,0.15), 0 0 16px -2px #c8893a; }
+
+.bl-podium-1 { order: 2; }
+.bl-podium-2 { order: 1; }
+.bl-podium-3 { order: 3; }
+.bl-podium-1 .bl-podium-nome { font-size: 14.5px; }
+
+@media (max-width: 600px) {
+  .bl-podium { gap: 6px; padding: 20px 4px 0; }
+  .bl-podium-step { width: 31%; }
+  .bl-podium-nome { font-size: 11px; max-width: 100%; }
+  .bl-podium-valor { font-size: 16px; }
+  .bl-podium-1 .bl-podium-bloco { height: 76px; }
+  .bl-podium-2 .bl-podium-bloco { height: 56px; }
+  .bl-podium-3 .bl-podium-bloco { height: 42px; }
+  .bl-podium-medal { font-size: 21px; }
 }
 

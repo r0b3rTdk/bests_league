@@ -20,6 +20,10 @@ firebase.initializeApp(firebaseConfig);
 // ... código de inicialização do Firebase acima ...
 const db = firebase.database();
 
+// Expõe o Storage (upload de fotos dos jogadores) — usa o mesmo bucket
+// já configurado no projeto Firebase acima.
+const storage = firebase.storage();
+
 // detectar se você está rodando no seu PC
 const isLocal = window.location.hostname === "localhost" || 
                 window.location.hostname === "127.0.0.1" || 

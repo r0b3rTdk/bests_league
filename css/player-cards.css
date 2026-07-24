@@ -1,23 +1,32 @@
+/* ==========================================================
+   BESTS LEAGUE — PLAYER CARDS
+   Arquivo padronizado
+   Autor: Robert Emanuel
+   Observação:
+   - Organização e formatação padronizadas.
+   - Comportamento visual preservado.
+   ========================================================== */
+
 /* ============================================================
    BESTS LEAGUE — cards estilo FIFA Ultimate Team (aba Jogadores)
+   Base da Carta + Animações importadas do projeto CARDS
    ============================================================ */
 
-/* ============================================================
-   PÁGINA DE JOGADORES — cards estilo FIFA/PES (CORRIGIDO)
-   ============================================================ */
-.bl-elenco-toolbar { 
-  display: flex; 
-  justify-content: space-between; 
-  align-items: center; 
-  margin-bottom: 28px; /* Aumentado para empurrar o time para baixo */
-  gap: 12px; 
-  flex-wrap: wrap; 
+/* Toolbar e Seções de Times */
+.bl-elenco-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 28px;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
-.bl-time-secao { 
-  margin-top: 12px; /* Adicionado para criar espaço extra no topo */
-  margin-bottom: 40px; 
+.bl-time-secao {
+  margin-top: 12px;
+  margin-bottom: 40px;
 }
+
 .bl-time-secao-label {
   display: flex; align-items: center; gap: 10px;
   font-family: 'Oswald', sans-serif;
@@ -34,18 +43,29 @@
   width: 100%;
 }
 
-/* Card principal — Proporções e formato FIFA real */
+/* ============================================================
+   BASE DA CARTA & TILT 3D — ESTILO CARDS
+   ============================================================ */
+
+/* Card principal — Proporções e formato FUT real */
 .fut-player-card {
   position: relative;
-  width: 190px; /* Alargado ligeiramente */
-  height: 270px; /* Encurtado para perder o aspecto esticado */
-  padding: 1.2rem 0 0.8rem;
+  width: 190px;
+  height: 270px;
+  padding: 0.3rem 0 0.7rem;
   cursor: pointer;
-  transition: transform 0.2s ease, filter 0.2s ease;
   font-family: 'Saira Semi Condensed', 'Oswald', sans-serif;
   flex-shrink: 0;
-  
-  /* Novo Clip-path: formato clássico de escudo do FUT, bico curto */
+  animation: futCardEnter 0.45s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+
+  /* Tilt 3D controlado via JS (initFutCardTilt) através das variáveis --rx e --ry */
+  --rx: 0deg;
+  --ry: 0deg;
+  transform: perspective(900px) rotateX(var(--rx)) rotateY(var(--ry)) translateY(0) scale(1);
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease, filter 0.2s ease;
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.5);
+
+  /* Clip-path clássico de escudo FUT (bico curto) */
   clip-path: polygon(
     8% 0%, 92% 0%,
     100% 6%,
@@ -55,15 +75,15 @@
     0% 6%
   );
   overflow: hidden;
+  transform: perspective(1000px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
 }
 
-/* Truque de Mestre: Criando um escudo interno escuro para dar o efeito de 
-   borda colorida e garantir contraste absoluto para os textos e números */
+/* Escudo interno escuro para dar o efeito de borda colorida e garantir contraste */
 .fut-player-card::after {
   content: '';
   position: absolute;
-  inset: 3px; /* Espessura da borda da carta */
-  background: rgba(15, 15, 18, 0.88); /* Fundo escuro e denso */
+  inset: 3px;
+  background: rgba(15, 15, 18, 0.88);
   clip-path: polygon(
     8% 0%, 92% 0%,
     100% 6%,
@@ -75,28 +95,178 @@
   z-index: 1;
 }
 
+/* Brilho de folha metálica — varre devagar em idle e acelera no hover */
+.fut-card-shine {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background: linear-gradient(115deg, transparent 30%, rgba(255,255,255,0.55) 48%, rgba(255,255,255,0.06) 55%, transparent 72%);
+  background-size: 250% 250%;
+  background-position: 130% -30%;
+  mix-blend-mode: overlay;
+  animation: futShineIdle 5.5s ease-in-out infinite;
+}
+
+@keyframes futShineIdle {
+  0%, 100% { background-position: 130% -30%; }
+  50% { background-position: -25% 65%; }
+}
+
+@keyframes futShineHover {
+  0% { background-position: 130% -30%; }
+  100% { background-position: -30% 70%; }
+}
+
+@keyframes futCardEnter {
+  0% { opacity: 0; transform: perspective(900px) rotateX(var(--rx)) rotateY(var(--ry)) translateY(16px) scale(0.93); }
+  100% { opacity: 1; transform: perspective(900px) rotateX(var(--rx)) rotateY(var(--ry)) translateY(0) scale(1); }
+}
+
+/* Escalonamento da entrada — efeito "abertura de pacote" carta a carta */
+.bl-fifa-cards-grid .fut-player-card:nth-child(n+1),
+.bl-fifa-cards-grid-fame .fut-player-card:nth-child(n+1) { animation-delay: 0.00s; }
+.bl-fifa-cards-grid .fut-player-card:nth-child(n+2),
+.bl-fifa-cards-grid-fame .fut-player-card:nth-child(n+2) { animation-delay: 0.03s; }
+.bl-fifa-cards-grid .fut-player-card:nth-child(n+3),
+.bl-fifa-cards-grid-fame .fut-player-card:nth-child(n+3) { animation-delay: 0.06s; }
+.bl-fifa-cards-grid .fut-player-card:nth-child(n+4),
+.bl-fifa-cards-grid-fame .fut-player-card:nth-child(n+4) { animation-delay: 0.09s; }
+.bl-fifa-cards-grid .fut-player-card:nth-child(n+5),
+.bl-fifa-cards-grid-fame .fut-player-card:nth-child(n+5) { animation-delay: 0.12s; }
+.bl-fifa-cards-grid .fut-player-card:nth-child(n+6),
+.bl-fifa-cards-grid-fame .fut-player-card:nth-child(n+6) { animation-delay: 0.15s; }
+.bl-fifa-cards-grid .fut-player-card:nth-child(n+7),
+.bl-fifa-cards-grid-fame .fut-player-card:nth-child(n+7) { animation-delay: 0.18s; }
+.bl-fifa-cards-grid .fut-player-card:nth-child(n+8),
+.bl-fifa-cards-grid-fame .fut-player-card:nth-child(n+8) { animation-delay: 0.21s; }
+.bl-fifa-cards-grid .fut-player-card:nth-child(n+9),
+.bl-fifa-cards-grid-fame .fut-player-card:nth-child(n+9) { animation-delay: 0.24s; }
+.bl-fifa-cards-grid .fut-player-card:nth-child(n+10),
+.bl-fifa-cards-grid-fame .fut-player-card:nth-child(n+10) { animation-delay: 0.27s; }
+.bl-fifa-cards-grid .fut-player-card:nth-child(n+11),
+.bl-fifa-cards-grid-fame .fut-player-card:nth-child(n+11) { animation-delay: 0.30s; }
+
+/* Interatividade Hover com Tilt 3D + Glow na cor da raridade */
 .fut-player-card:hover {
   transform: translateY(-6px) scale(1.02);
   filter: brightness(1.15);
 }
 
-/* Garante que o conteúdo fique acima do fundo escuro novo */
-.player-card-top, .player-card-bottom {
+.fut-player-card:hover .fut-card-shine {
+  animation: futShineHover 0.85s ease forwards;
+}
+
+/* Suporte a Lendas e Raridades Especiais */
+.fut-player-card[data-rarity="icon"] {
+  box-shadow: 0 10px 22px rgba(0,0,0,0.5), 0 0 18px rgba(160,110,232,0.4);
+}
+.fut-player-card[data-rarity="icon"]:hover {
+  box-shadow: 0 20px 36px rgba(0,0,0,0.6), 0 0 34px 2px rgba(160,110,232,0.75);
+}
+
+/* ============================================================
+   ESTILO DAS LENDAS (BASE CLARA / PEARLESCENT)
+   ============================================================ */
+.fut-player-card[data-rarity="lenda"] {
+  box-shadow: 0 0 26px -4px rgba(216, 194, 131, 0.55), 0 10px 20px rgba(0, 0, 0, 0.45);
+}
+.fut-player-card[data-rarity="lenda"]:hover {
+  box-shadow: 0 20px 36px rgba(0,0,0,0.6), 0 0 36px 3px rgba(216, 194, 131, 0.8);
+}
+/* Fundo Branco/Dourado da Carta */
+.fut-player-card[data-rarity="lenda"]::after {
+  background: linear-gradient(175deg, #efe5c5, #d8c283);
+}
+
+/* Textos Escuros */
+.fut-player-card[data-rarity="lenda"] .player-master-info .player-rating,
+.fut-player-card[data-rarity="lenda"] .player-name span {
+  color: #3b2607 !important;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.5);
+}
+.fut-player-card[data-rarity="lenda"] .player-name::after {
+  background: linear-gradient(90deg, transparent, rgba(92, 61, 16, 0.22), transparent);
+}
+.fut-player-card[data-rarity="lenda"] .player-feature-value {
+  color: #6b4a1e !important;
+}
+.fut-player-card[data-rarity="lenda"] .player-feature-title {
+  color: #8a7a5c !important;
+}
+/* Silhueta marrom e Capitão escuro */
+.fut-player-card[data-rarity="lenda"] .player-silhouette svg ellipse,
+.fut-player-card[data-rarity="lenda"] .player-silhouette svg path {
+  fill: #5c3d10;
+}
+.fut-player-card[data-rarity="lenda"] .fut-card-capitao {
+  background: linear-gradient(160deg, #3b2607, #1c1200);
+  color: #f0d99a;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.35), 0 0 0 1.5px rgba(59,38,7,0.4);
+  border: none;
+}
+/* Aumentar fonte dos atributos APENAS na carta Lenda GRANDE (Perfil) */
+.fut-player-card.bl-fcard-grande[data-rarity="lenda"] .player-feature-value {
+  font-size: 1.5rem !important; /* Aumenta os números (Gols, Jogos, etc) */
+}
+
+.fut-player-card.bl-fcard-grande[data-rarity="lenda"] .player-feature-title {
+  font-size: 0.75rem !important; /* Aumenta as letras (GOLS, JOGOS, etc) */
+}
+@media (prefers-reduced-motion: reduce) {
+  .fut-player-card { transition: none; animation: none; }
+  .fut-card-shine { animation: none; background-position: 30% 10%; }
+}
+
+/* ============================================================
+   ESTRUTURA INTERNA DA CARTA & ACOMPANHAMENTO DE FOTOS
+   ============================================================ */
+
+.player-card-top, .player-card-bottom, .player-photo-zone {
   position: relative;
   z-index: 2;
 }
 
-/* Topo do card */
+/* Topo / Zona da Foto */
 .player-card-top {
   display: flex;
   padding: 0 1.2rem;
   height: 110px;
 }
 
+.player-photo-zone {
+  width: 100%;
+  height: 137px;
+  overflow: hidden;
+  position: relative;
+  top: 8px; /* <--- (desloca o bloco todo para baixo sem cortar a imagem) */
+}
+
+.player-photo-real {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  /* O esfumaçado perfeito que derrete a foto na base */
+  -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 95%);
+  mask-image: linear-gradient(to bottom, black 80%, transparent 95%);
+}
+
+.player-photo-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
 .player-master-info {
   position: absolute;
   left: 14px;
-  top: 10px;
+  top: 7px;
+  z-index: 3;
   line-height: 1.2;
   text-transform: uppercase;
   display: flex;
@@ -105,37 +275,114 @@
 }
 
 .player-master-info .player-rating {
-  font-size: 2rem;
+  font-family: var(--bl-font-impact, 'Oswald', sans-serif);
+  font-size: 2.2rem;
   font-weight: 700;
-  color: #FFF !important; /* Força o Over a ser branco e saltar aos olhos */
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+  /* O segredo está aqui: currentColor puxa a cor (roxo, ouro, prata) que o seu JS já manda! */
+  color: currentColor !important; 
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
 }
 
 .player-master-info .player-position {
   font-size: 0.8rem;
   font-weight: 700;
   letter-spacing: 0.05em;
-  color: var(--fcard-cor); /* Mantém a cor da raridade sutil na posição */
+  color: var(--fcard-cor);
   margin-top: -2px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .player-master-info .player-stars {
-  margin-top: 4px;
+  margin-top: 2px;
   display: flex;
   gap: 1px;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.8); /* Dá profundidade nas estrelinhas */
 }
 
-/* Silhueta do Jogador */
+/* Selos e Badges (Capitão, Artilheiro, Maior Craque) */
+.fut-card-badges {
+  position: absolute;
+  top: 7px;
+  right: 8px;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  z-index: 10;
+}
+
+.fut-player-card.bl-fcard-grande .fut-card-capitao,
+.fut-player-card.bl-fcard-grande .fut-card-badge {
+  width: 38px;
+  height: 38px;
+  font-size: 18px;
+}
+
+.fut-card-capitao,
+.fut-card-badge {
+  position: relative;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  line-height: 1;
+  border: 0.3px solid rgba(10,10,12,0.92);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+  animation: fcardBadgePop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+}
+
+@keyframes fcardBadgePop {
+  from { opacity: 0; transform: scale(0.4); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.fut-card-capitao {
+  background: linear-gradient(135deg, var(--bl-gold-light, #F0CC5C), var(--bl-gold, #D4AF37));
+  color: #1a1305;
+  font-family: 'Oswald', sans-serif;
+  font-weight: 800;
+  font-size: 12px;
+}
+
+.fut-card-artilheiro { background: linear-gradient(135deg, #e8c98a, #b8842f); }
+.fut-card-maiorcraque { background: linear-gradient(135deg, #fdeec2, #c9962e); }
+
+.player-team-dot {
+  width: 20px;
+  height: 5px;
+  border-radius: 3px;
+  margin-top: 5px;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.45);
+}
+
+/* Silhueta do Jogador (Fallback) */
 .player-picture {
-  width: 110px;
-  height: 110px;
-  margin: 0 0 0 auto;
+  width: 100px;
+  height: 100px;
+  margin: 0 auto;
   overflow: hidden;
   position: relative;
 }
+
+.player-glow {
+  position: absolute;
+  inset: -14%;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--fcard-cor) 0%, transparent 68%);
+  opacity: 0.4;
+  z-index: 0;
+}
 .player-silhouette {
+  position: relative;
+  z-index: 1;
   width: 100%;
-  height: 100%;
+  height: 90%;
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -145,9 +392,10 @@
   height: 90%;
 }
 
-/* Parte inferior: Nome e Atributos */
 .player-card-bottom {
-  margin-top: 4px;
+  margin-top: 2px;
+  position: relative;
+  z-index: 4; /* Isso coloca os textos e números ACIMA do brilho metálico */
 }
 
 .player-info {
@@ -155,28 +403,62 @@
   margin: 0 auto;
 }
 
-/* Nome do jogador no estilo FIFA */
 .player-name {
+  position: relative;
   width: 100%;
   text-align: center;
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.02em;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-  padding-bottom: 0.2rem;
+  padding-bottom: 0.3rem;
   margin-bottom: 0.4rem;
+}
+.player-name::after {
+  content: '';
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  bottom: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--fcard-cor), transparent);
+  opacity: 0.85;
 }
 .player-name span {
   display: block;
-  color: #FFF !important; /* Nome sempre perfeitamente visível */
+  color: #FFF !important;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   text-shadow: 1px 1px 3px rgba(0,0,0,0.9);
 }
 
-/* Colunas de Atributos corrigidas para não esmagar */
+/* Selo redondo de Campeão */
+.fut-card-campeao {
+  background: linear-gradient(135deg, #fce082, #c9962e);
+  color: #1a1305;
+  border: 0.5px solid #8a6a1c;
+  position: relative;
+}
+
+/* Número indicador de títulos (ex: 1, 2, 3...) */
+.fut-card-campeao .badge-count {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  background: #1a1305;
+  color: #f0cc5c;
+  font-size: 0.55rem;
+  font-weight: 800;
+  border-radius: 50%;
+  width: 12px;
+  height: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Colunas de Atributos */
 .player-features {
   display: flex;
   justify-content: center;
@@ -193,30 +475,27 @@
   padding-right: 4px;
 }
 
-/* Cada linha de atributo (Ex: 10 GOLS) */
 .player-features-col span {
   display: flex;
   align-items: center;
-  justify-content: space-between; /* Separa o número do texto perfeitamente */
-  font-size: 0.75rem;
+  justify-content: space-between;
+  font-size: 0.72rem;
   text-transform: uppercase;
   line-height: 1.2;
 }
 
-/* Os números dos atributos */
 .player-feature-value {
   font-weight: 700;
-  color: var(--bl-gold-light) !important; /* Números em dourado vivo */
+  color: var(--bl-gold-light, #F0CC5C) !important;
   font-family: 'Oswald', sans-serif;
   font-size: 0.85rem;
   text-align: left;
 }
 
-/* Os textos dos atributos (Gols, Média, Amar) */
 .player-feature-title {
   font-weight: 500;
-  color: #A0AEC0 !important; /* Cinza claro de alto contraste */
-  font-size: 0.65rem;
+  color: #A0AEC0 !important;
+  font-size: 0.62rem;
   letter-spacing: 0.02em;
   text-align: right;
 }
@@ -225,24 +504,64 @@
 .fut-player-card.bl-fcard-grande {
   width: 280px;
   height: 400px;
-  padding: 1.8rem 0 1.5rem;
+  padding: 0.5rem 0 1.2rem;
   cursor: default;
-  pointer-events: none;
 }
-.fut-player-card.bl-fcard-grande .player-card-top { height: 160px; }
-.fut-player-card.bl-fcard-grande .player-picture { width: 160px; height: 160px; }
+
+.fut-player-card.bl-fcard-grande .player-card-top { height: 180px; }
+.fut-player-card.bl-fcard-grande .player-photo-zone { height: 220px; top: 1px !important; overflow: visible; }
+.fut-player-card.bl-fcard-grande .player-photo-real {
+  object-position: center 1px !important;
+  height: 235px;
+}
+.fut-player-card.bl-fcard-grande .player-picture { width: 190px; height: 190px; margin-top: -10px; }
 .fut-player-card.bl-fcard-grande .player-rating { font-size: 3rem; }
 .fut-player-card.bl-fcard-grande .player-position { font-size: 1.1rem; }
-.fut-player-card.bl-fcard-grande .player-name { font-size: 1.5rem; }
-.fut-player-card.bl-fcard-grande .player-features-col span { font-size: 1rem; }
+.fut-player-card.bl-fcard-grande .player-name { font-size: 1.2rem; }
+.fut-player-card.bl-fcard-grande .player-features-col span { font-size: 0.95rem; }
 .fut-player-card.bl-fcard-grande .player-feature-value { font-size: 1.2rem; }
 .fut-player-card.bl-fcard-grande .player-feature-title { font-size: 0.85rem; }
 
-/* Ajuste Fino para Telas Pequenas */
+/* ============================================================
+   PLAQUINHAS DE HISTÓRICO GERAL (ESTILO LENDAS)
+   ============================================================ */
+.bl-award-badge.badge-lenda {
+  background: linear-gradient(175deg, rgba(255,251,240,0.92), rgba(230,214,171,0.88));
+  border: 1px solid rgba(216, 194, 131, 0.8);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+}
+
+/* Os títulos (Artilheiro Histórico / Maior Craque) */
+.bl-award-badge.badge-lenda .bl-award-label {
+  color: #8a7a5c;
+  font-family: 'Oswald', sans-serif;
+  font-weight: 600;
+}
+
+/* O nome do jogador */
+.bl-award-badge.badge-lenda .bl-award-player {
+  color: #3b2607;
+  font-family: 'Saira Semi Condensed', 'Oswald', sans-serif;
+  text-transform: uppercase;
+  font-weight: 700;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.5);
+  font-size: 1.1rem;
+}
+
+/* Os números (Gols / MVP) */
+.bl-award-badge.badge-lenda .bl-award-stat {
+  color: #6b4a1e;
+  font-family: 'Oswald', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+/* Ajuste Fino para Mobile */
 @media (max-width: 760px) {
   .bl-fifa-cards-grid { justify-content: center; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px 12px; }
-  .fut-player-card { width: 165px; height: 235px; padding: 1rem 0 0.6rem; }
+  .fut-player-card { width: 165px; height: 248px; padding: 0.2rem 0 0.5rem; }
   .player-card-top { height: 90px; padding: 0 0.8rem; }
+  .player-photo-zone { height: 110px; }
   .player-picture { width: 90px; height: 90px; }
   .player-master-info { left: 10px; top: 6px; }
   .player-master-info .player-rating { font-size: 1.5rem; }
@@ -286,23 +605,11 @@
   padding-bottom: 8px;
 }
 
-.bl-table-profile th {
-  padding-bottom: 12px;
-}
-
-.bl-table-profile td {
-  padding: 12px 10px;
-}
+.bl-table-profile th { padding-bottom: 12px; }
+.bl-table-profile td { padding: 12px 10px; }
 
 @media (max-width: 760px) {
-  .bl-perfil-container {
-    gap: 20px;
-    padding: 0 4px;
-  }
-  .bl-profile-history-section {
-    padding: 14px 10px;
-  }
-  .bl-table-profile {
-    font-size: 12px;
-  }
+  .bl-perfil-container { gap: 20px; padding: 0 4px; }
+  .bl-profile-history-section { padding: 14px 10px; }
+  .bl-table-profile { font-size: 12px; }
 }

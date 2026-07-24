@@ -1,5 +1,7 @@
 // ============================================================
 // BESTS LEAGUE — aba Jogadores (cards estilo FIFA Ultimate Team)
+// Base visual & Efeitos Tilt 3D integrados do projeto CARDS
+// PARTE 1 DE 2
 // ============================================================
 
 let subTabJogadores = "temporada"; 
@@ -11,29 +13,31 @@ function raridade(overall) {
   return "icon";
 }
 
+// Gradientes de fundo da carta extraídos da base do projeto CARDS
 const CARD_BG = {
-  bronze: "radial-gradient(ellipse at 50% 30%, #c8893a 0%, #7a4010 40%, #3d1f00 100%)",
-  prata:  "radial-gradient(ellipse at 50% 30%, #9aa8c0 0%, #4a5568 40%, #1e2433 100%)",
-  ouro:   "radial-gradient(ellipse at 50% 30%, #f0d060 0%, #c8a020 40%, #6b5000 100%)",
-  icon:   "radial-gradient(ellipse at 50% 30%, #b090e8 0%, #6030b0 40%, #1a0840 100%)",
+  bronze: "radial-gradient(ellipse at 50% 22%, #e0a862 0%, #8a4f1e 45%, #2c1608 100%)",
+  prata:  "radial-gradient(ellipse at 50% 22%, #eef2f7 0%, #8d99ac 45%, #262c36 100%)",
+  ouro:   "radial-gradient(ellipse at 50% 22%, #ffe28a 0%, #d8a832 45%, #5c3f05 100%)",
+  icon:   "radial-gradient(ellipse at 50% 22%, #e6b9ff 0%, #a53bff 45%, #250a45 100%)",
+  lenda:  "radial-gradient(ellipse at 50% 22%, #fffdf3 0%, #e9d9a4 42%, #9c7a2e 100%)",
 };
 
 const CARD_COR_TEXTO = {
-  bronze: "#d4a017",
-  prata:  "#a8b8c8",
-  ouro:   "#e9cc74",
-  icon:   "#c8a8ff",
+  bronze: "#f0b26b",
+  prata:  "#dfe6ee",
+  ouro:   "#ffe9ad",
+  icon:   "#e9c8ff",
+  lenda:  "#fff6d8",
 };
 
-// Helper interno para calcular o campeão de qualquer temporada (Usado no Hall of Fame e nos Títulos)
+// Helper interno para calcular o campeão de qualquer temporada (Hall of Fame e Títulos)
 function descobrirTimeCampeaoObjeto(temp) {
-  // Força o Time Azul (Time B) como campeão legítimo de 2025 (Pênaltis: 1x3)
   if (temp.id === "temp_2025" || (temp.nome && temp.nome.includes("2025"))) {
     return { ehTimeACampeao: false, objeto: temp.timeB, vitA: 8, vitB: 8, emp: 3, gpA: 89, gcA: 86, gpB: 86, gcB: 89, derA: 8, derB: 8 };
   }
 
   let vitA = 0, vitB = 0, emp = 0, gpA = 0, gcA = 0, gpB = 0, gcB = 0;
-  const jogosValidos = (temp.jogos || []).filter(j => j.placarA !== null && j.placarB !== null);
+  const jogosValidos = (temp.jogos || []).filter(j => j.placarA !== null && j.placarA !== undefined && j.placarB !== null && j.placarB !== undefined);
   
   jogosValidos.forEach(j => {
     gpA += j.placarA; gcA += j.placarB; gpB += j.placarB; gcB += j.placarA;
@@ -52,12 +56,11 @@ function calcularLendasdaPelada() {
   const listaTemporadas = appState.temporadas || [];
   
   listaTemporadas.forEach((temp) => {
-    const jogosValidos = (temp.jogos || []).filter(j => j.placarA !== null && j.placarB !== null);
+    const jogosValidos = (temp.jogos || []).filter(j => j.placarA !== null && j.placarA !== undefined && j.placarB !== null && j.placarB !== undefined);
     const jogosComPlacar = jogosValidos.length;
     const jogadoresTemp = temp.jogadores || [];
     const resultadoCampeao = descobrirTimeCampeaoObjeto(temp);
     
-    // 🌟 VOLTOU AO ID ÚNICO: Permite que o 1º e 2º turno somem os dados juntos (ex: 19 + 23 = 42 jogos)
     const tempKey = temp.id || temp.nome || Math.random().toString();
 
     // 1. Soma gols do histórico estruturado (Temporadas antigas)
@@ -68,7 +71,7 @@ function calcularLendasdaPelada() {
         
         const chaveBusca = nomeLimpo.toLowerCase();
         if (!mapaLendas[chaveBusca]) {
-          mapaLendas[chaveBusca] = { nome: nomeLimpo, overall: 3, gols: 0, jogosDisputados: 0, titulos: 0, temporadasAtivas: new Set() };
+          mapaLendas[chaveBusca] = { nome: nomeLimpo, overall: 3, gols: 0, jogosDisputados: 0, titulos: 0, craques: 0, temporadasAtivas: new Set() };
         }
         mapaLendas[chaveBusca].gols += g.quantidade || 1;
         mapaLendas[chaveBusca].temporadasAtivas.add(tempKey);
@@ -82,12 +85,10 @@ function calcularLendasdaPelada() {
 
       const chaveBusca = nomeLimpo.toLowerCase();
       if (!mapaLendas[chaveBusca]) {
-        mapaLendas[chaveBusca] = { nome: j.nome, overall: j.overall || 3, gols: 0, jogosDisputados: 0, titulos: 0, temporadasAtivas: new Set() };
+        mapaLendas[chaveBusca] = { nome: j.nome, overall: j.overall || 3, gols: 0, jogosDisputados: 0, titulos: 0, craques: 0, temporadasAtivas: new Set() };
       }
       mapaLendas[chaveBusca].overall = Math.max(mapaLendas[chaveBusca].overall, j.overall || 3);
       
-      // 🌟 TRAVA DE SEGURANÇA: Só adiciona a temporada e os jogos se o turno realmente teve partidas jogadas (> 0)
-      // Isso elimina na hora os rascunhos vazios que faziam os jogadores de 23 jogos aparecerem!
       if (jogosComPlacar > 0) {
         mapaLendas[chaveBusca].temporadasAtivas.add(tempKey);
         mapaLendas[chaveBusca].jogosDisputados += jogosComPlacar;
@@ -96,13 +97,14 @@ function calcularLendasdaPelada() {
       const tClean = j.time ? j.time.toLowerCase().trim() : "";
       const estavaNoTimeA = tClean === "timea" || tClean === "bra";
       const estavaNoTimeB = tClean === "timeb" || tClean === "ver";
-      
-      if (jogosComPlacar > 0 && ((resultadoCampeao.ehTimeACampeao && estavaNoTimeA) || (!resultadoCampeao.ehTimeACampeao && estavaNoTimeB))) {
+
+      const temporadaEncerrada = !!(temp.arquivadaEm);
+      if (temporadaEncerrada && jogosComPlacar > 0 && ((resultadoCampeao.ehTimeACampeao && estavaNoTimeA) || (!resultadoCampeao.ehTimeACampeao && estavaNoTimeB))) {
         mapaLendas[chaveBusca].titulos += 1;
       }
     });
 
-    // 3. Soma gols das partidas normais de cada temporada
+    // 3. Soma gols das partidas normais de cada temporada + quantas vezes foi craque
     jogosValidos.forEach((jogo) => {
       (jogo.gols || []).forEach((g) => {
         const nomeLimpo = g.jogador ? g.jogador.trim() : "";
@@ -110,7 +112,7 @@ function calcularLendasdaPelada() {
 
         const chaveBusca = nomeLimpo.toLowerCase();
         if (!mapaLendas[chaveBusca]) {
-          mapaLendas[chaveBusca] = { nome: g.jogador, overall: 3, gols: 0, jogosDisputados: 0, titulos: 0, temporadasAtivas: new Set() };
+          mapaLendas[chaveBusca] = { nome: g.jogador, overall: 3, gols: 0, jogosDisputados: 0, titulos: 0, craques: 0, temporadasAtivas: new Set() };
         }
         if (!temp.historico) {
           mapaLendas[chaveBusca].gols += g.quantidade || 1;
@@ -119,38 +121,64 @@ function calcularLendasdaPelada() {
           mapaLendas[chaveBusca].temporadasAtivas.add(tempKey);
         }
       });
+
+      const nomeCraque = jogo.craque ? jogo.craque.trim() : "";
+      if (nomeCraque) {
+        const chaveCraque = nomeCraque.toLowerCase();
+        if (!mapaLendas[chaveCraque]) {
+          mapaLendas[chaveCraque] = { nome: nomeCraque, overall: 3, gols: 0, jogosDisputados: 0, titulos: 0, craques: 0, temporadasAtivas: new Set() };
+        }
+        mapaLendas[chaveCraque].craques += 1;
+        mapaLendas[chaveCraque].temporadasAtivas.add(tempKey);
+      }
     });
   });
 
-  // Filtra estritamente quem jogou em mais de uma temporada ou turno real com jogos (> 1)
   return Object.values(mapaLendas)
     .filter((jogador) => jogador.temporadasAtivas.size > 1)
     .sort((a, b) => b.gols - a.gols || b.jogosDisputados - a.jogosDisputados);
 }
 
+function buscarFotoPorNome(nome) {
+  const nomeUpper = (nome || "").trim().toLowerCase();
+  if (!nomeUpper) return "";
+  
+  // CORREÇÃO AQUI: tiramos o "window." para ele ler o banco de dados corretamente
+  const temporadas = (typeof appState !== "undefined" ? appState.temporadas : []) || [];
+  
+  for (const t of temporadas) {
+    const achado = (t.jogadores || []).find((j) => j.foto && j.nome && j.nome.trim().toLowerCase() === nomeUpper);
+    if (achado) return achado.foto;
+  }
+  return "";
+}
+
+function legendaEhCapitaoAtual(nome) {
+  if (typeof capitaoDoTime !== "function" || typeof temporadaEmAndamento !== "function") return false;
+  const ativa = temporadaEmAndamento();
+  if (!ativa) return false;
+  const nomeUpper = (nome || "").trim().toLowerCase();
+  if (!nomeUpper) return false;
+  const capA = capitaoDoTime(ativa, TIME_A);
+  const capB = capitaoDoTime(ativa, TIME_B);
+  return !!((capA && capA.nome.trim().toLowerCase() === nomeUpper) || (capB && capB.nome.trim().toLowerCase() === nomeUpper));
+}
+
 function gerarHtmlHallOfFameInline(temp) {
   const res = descobrirTimeCampeaoObjeto(temp);
-  const timeCampeao = res.objeto;
-  const jogosValidos = (temp.jogos || []).filter(j => j.placarA !== null && j.placarB !== null);
-  const totalJogos = jogosValidos.length;
-
-  const cVitorias = res.ehTimeACampeao ? res.vitA : res.vitB;
-  const cDerrotas = res.ehTimeACampeao ? res.vitB : res.vitA; 
-  const cGolsPro = res.ehTimeACampeao ? res.gpA : res.gpB;
-  const cGolsContra = res.ehTimeACampeao ? res.gcA : res.gcB;
-  const cAproveitamento = totalJogos > 0 ? (((cVitorias * 3 + res.emp) / (totalJogos * 3)) * 100).toFixed(1) : "0.0";
+  const jogosValidos = (temp.jogos || []).filter(j => j.placarA !== null && j.placarA !== undefined && j.placarB !== null && j.placarB !== undefined);
 
   let mapaGols = {}, mapaCraques = {};
   
   if (temp.historico && temp.historico.gols) {
-  temp.historico.gols.forEach(g => { 
-    mapaGols[g.jogador] = (mapaGols[g.jogador] || 0) + (g.quantidade || 1); // 🌟 Mudado de 0 para 1
-  });
+    temp.historico.gols.forEach(g => { 
+      mapaGols[g.jogador] = (mapaGols[g.jogador] || 0) + (g.quantidade || 1);
+    });
   }
   jogosValidos.forEach(j => {
     if (j.craque) mapaCraques[j.craque] = (mapaCraques[j.craque] || 0) + 1;
     (j.gols || []).forEach(g => { 
-      mapaGols[g.jogador] = (mapaGols[g.jogador] || 0) + (g.quantidade || 1); // 🌟 Mudado de 0 para 1
+      mapaGols[g.jogador] = (mapaGols[g.jogador] || 0) + (g.quantidade || 1);
     });
   });
 
@@ -162,7 +190,6 @@ function gerarHtmlHallOfFameInline(temp) {
     return res.ehTimeACampeao ? (tClean === "timea" || tClean === "bra") : (tClean === "timeb" || tClean === "ver");
   });
 
-  // Definindo o botão de reabertura (código seguro)
   const botaoReabrirHtml = window.isAdmin ? `
     <div style="text-align: center; margin-bottom: 25px;">
       <button type="button" class="bl-btn-secondary" id="btnReabrirTemporadaAcao" style="border-color: var(--bl-gold); color: var(--bl-gold-light); font-size: 11px; padding: 6px 14px;">
@@ -170,14 +197,13 @@ function gerarHtmlHallOfFameInline(temp) {
       </button>
     </div>` : '';
 
-  // Retornando a soma de tudo (Elenco + Prêmios + Estatísticas)
   return `
     <div class="bl-hall-fame-inline-container">
       ${botaoReabrirHtml}
       
       <h3 class="bl-section-title-fame">👥 Elenco Vitorioso</h3>
       <div class="bl-fifa-cards-grid-fame">
-        ${jogadoresCampeoes.map(j => typeof renderFifaCard === "function" ? renderFifaCard(temp, j, false) : `<div>${j.nome}</div>`).join("")}
+        ${jogadoresCampeoes.map((j, i) => typeof renderFifaCard === "function" ? renderFifaCard(temp, j, false, i) : `<div>${j.nome}</div>`).join("")}
       </div>
 
       <div class="bl-awards-row">
@@ -219,8 +245,13 @@ function initFameDragScroll() {
   });
   slider.addEventListener('mouseleave', () => { isDown = false; slider.style.cursor = 'grab'; });
   slider.addEventListener('mouseup', () => { isDown = false; slider.style.cursor = 'grab'; });
+// ============================================================
+// BESTS LEAGUE — aba Jogadores (cards estilo FIFA Ultimate Team)
+// PARTE 2 DE 2
+// ============================================================
+
   slider.addEventListener('mousemove', (e) => {
-    if(!isDown) return;
+    if (!isDown) return;
     e.preventDefault();
     const x = e.pageX - slider.offsetLeft;
     const walk = (x - startX) * 1.5;
@@ -277,11 +308,22 @@ function renderJogadoresTab() {
       if (jogadoresDoTime.length === 0) return "";
       const timeIdCrest = key === "timeA" ? "timeA" : key === "timeB" ? "timeB" : "avulso";
 
+      const timeReal = key === "timeA" ? TIME_A : key === "timeB" ? TIME_B : null;
+      const formaTime = timeReal && typeof formaRecenteDoTime === "function" ? formaRecenteDoTime(temp, timeReal, 5) : [];
+      const formaHtml = formaTime.length ? `
+        <div class="bl-time-forma" title="Últimos resultados do time">
+          ${formaTime.map((r) => `<span class="forma-dot forma-${r}"></span>`).join("")}
+        </div>
+      ` : "";
+
       return `
         <div class="bl-time-secao">
-          <h3 class="bl-time-secao-label">${crestHtml(temp, timeIdCrest, 20)} ${escapeHtml(label)}</h3>
+          <h3 class="bl-time-secao-label">
+            ${crestHtml(temp, timeIdCrest, 20)} ${escapeHtml(label)}
+            ${formaHtml}
+          </h3>
           <div class="bl-fifa-cards-grid">
-            ${jogadoresDoTime.map((j) => renderFifaCard(temp, j, false)).join("")}
+            ${jogadoresDoTime.map((j, i) => renderFifaCard(temp, j, false, i)).join("")}
           </div>
         </div>
       `;
@@ -292,13 +334,59 @@ function renderJogadoresTab() {
     if (lendas.length === 0) {
       return toolbar + emptyStateHtml(ICONS.users, "Nenhuma lenda coroada", "Os jogadores precisam disputar mais de uma temporada para aparecer aqui.");
     }
+
+    const artilheiroLendas = lendas[0];
+    const craqueLendas = [...lendas].sort((a, b) => (b.craques || 0) - (a.craques || 0))[0];
+
+    // NOVO: Cria as plaquinhas de premiação histórica usando o estilo já existente
+    // NOVO: Cria as plaquinhas de premiação histórica usando o estilo já existente
+    const painelHistoricoHtml = `
+      <div class="bl-awards-row" style="margin-bottom: 24px;">
+        ${artilheiroLendas && artilheiroLendas.gols > 0 ? `
+        <div class="bl-award-badge badge-lenda">
+          <div class="bl-award-icon">⚽</div>
+          <div class="bl-award-info">
+            <span class="bl-award-label">ARTILHEIRO HISTÓRICO</span>
+            <span class="bl-award-player">${escapeHtml(artilheiroLendas.nome)}</span>
+            <span class="bl-award-stat">${artilheiroLendas.gols} GOLS</span>
+          </div>
+        </div>` : ""}
+        ${craqueLendas && craqueLendas.craques > 0 ? `
+        <div class="bl-award-badge badge-lenda">
+          <div class="bl-award-icon">⭐</div>
+          <div class="bl-award-info">
+            <span class="bl-award-label">MAIOR CRAQUE DA HISTÓRIA</span>
+            <span class="bl-award-player">${escapeHtml(craqueLendas.nome)}</span>
+            <span class="bl-award-stat">${craqueLendas.craques}× MVP</span>
+          </div>
+        </div>` : ""}
+      </div>
+    `;
+
     return toolbar + `
       <div class="bl-time-secao">
         <h3 class="bl-time-secao-label">⭐ Histórico Geral da Pelada</h3>
+        
+        ${painelHistoricoHtml}
+
         <div class="bl-fifa-cards-grid">
-          ${lendas.map((l) => {
-            const sufixoTitulo = l.titulos > 0 ? ` 🏆${l.titulos > 1 ? `x${l.titulos}` : ''}` : '';
-            return templateFifaCardHtml(l.nome + sufixoTitulo, l.overall, l.gols, 0, 0, 0, 0, l.jogosDisputados, false, true, "LNDA");
+          ${lendas.map((l, i) => {
+            return templateFifaCardHtml({
+              nome: l.nome,
+              overall: l.overall,
+              gols: l.gols,
+              jogos: l.jogosDisputados,
+              craques: l.craques,
+              grande: false,
+              isLenda: true,
+              textoTime: "LNDA",
+              titulos: l.titulos,
+              souCapitao: legendaEhCapitaoAtual(l.nome),
+              foto: buscarFotoPorNome(l.nome),
+              souArtilheiro: !!(artilheiroLendas && artilheiroLendas.gols > 0 && l.nome === artilheiroLendas.nome),
+              souMaiorCraque: !!(craqueLendas && craqueLendas.craques > 0 && l.nome === craqueLendas.nome),
+              indice: i,
+            });
           }).join("")}
         </div>
       </div>
@@ -306,36 +394,126 @@ function renderJogadoresTab() {
   }
 }
 
-function renderFifaCard(temp, j, grande) {
+function renderFifaCard(temp, j, grande, indice) {
   const stats = 'estatisticasJogador' in window ? window.estatisticasJogador(temp, j.nome) : { gols:0, mediaGolsPorJogo:0, amarelos:0, vermelhos:0, craques:0, jogosDisputados:0 };
   const media = stats.mediaGolsPorJogo.toFixed(2);
   const tClean = j.time ? j.time.toLowerCase().trim() : "";
   const isA = tClean === "timea" || tClean === "bra" || (temp.timeA && temp.timeA.nome && temp.timeA.nome.toLowerCase().includes(tClean));
   const isB = tClean === "timeb" || tClean === "ver" || (temp.timeB && temp.timeB.nome && temp.timeB.nome.toLowerCase().includes(tClean));
   const nomeTime = isA ? temp.timeA.nome : isB ? temp.timeB.nome : "AVL";
-  return templateFifaCardHtml(j.nome, j.overall, stats.gols, media, stats.amarelos, stats.vermelhos, stats.craques, stats.jogosDisputados, grande, false, nomeTime);
+
+  let ehCapitao = false;
+  if ((j.time === TIME_A || j.time === TIME_B) && typeof capitaoDoTime === "function") {
+    const capitaoTime = capitaoDoTime(temp, j.time);
+    ehCapitao = !!(capitaoTime && capitaoTime.id === j.id);
+  }
+
+  const artilhariaTemp = typeof calcularArtilharia === "function" ? calcularArtilharia(temp) : [];
+  const craquesTemp = typeof calcularCraques === "function" ? calcularCraques(temp) : [];
+  const liderArtilheiro = artilhariaTemp[0];
+  const liderCraque = craquesTemp[0];
+  const souArtilheiro = !!(liderArtilheiro && liderArtilheiro.gols > 0 && liderArtilheiro.jogador === j.nome);
+  const souMaiorCraque = !!(liderCraque && liderCraque.vezes > 0 && liderCraque.jogador === j.nome);
+
+  const corTime = isA ? temp.timeA.cor : isB ? temp.timeB.cor : "#5B7DFF";
+
+  const ehGoleiro = /\bGK\b/i.test(j.nome);
+  let statSecundarioValor = media;
+  let statSecundarioLabel = "Média";
+  if (ehGoleiro && (isA || isB) && typeof jogosSemSofrerGolsDoTime === "function") {
+    statSecundarioValor = jogosSemSofrerGolsDoTime(temp, isA ? TIME_A : TIME_B);
+    statSecundarioLabel = "Sem sofrer";
+  }
+
+  return templateFifaCardHtml({
+    nome: j.nome,
+    overall: j.overall,
+    gols: stats.gols,
+    media,
+    statSecundarioValor,
+    statSecundarioLabel,
+    amarelos: stats.amarelos,
+    vermelhos: stats.vermelhos,
+    craques: stats.craques,
+    jogos: stats.jogosDisputados,
+    grande,
+    isLenda: false,
+    textoTime: nomeTime,
+    corTime,
+    souCapitao: ehCapitao,
+    foto: j.foto || "",
+    souArtilheiro,
+    souMaiorCraque,
+    indice,
+  });
 }
 
-function templateFifaCardHtml(nome, overall, gols, media, amarelos, vermelhos, craques, jogos, grande, isLenda, textoTime) {
+function formaRecenteDoTime(temp, time, qtd) {
+  qtd = qtd || 5;
+  const jogosValidos = (typeof jogosOrdenados === "function" ? jogosOrdenados(temp) : (temp.jogos || []))
+    .filter((j) => j.placarA !== null && j.placarA !== undefined && j.placarB !== null && j.placarB !== undefined);
+  const ultimos = jogosValidos.slice(-qtd);
+  return ultimos.map((j) => {
+    const meu = time === TIME_A ? j.placarA : j.placarB;
+    const adversario = time === TIME_A ? j.placarB : j.placarA;
+    if (meu > adversario) return "V";
+    if (meu < adversario) return "D";
+    return "E";
+  });
+}
+
+function jogosSemSofrerGolsDoTime(temp, time) {
+  const jogosValidos = (temp.jogos || []).filter((j) => j.placarA !== null && j.placarA !== undefined && j.placarB !== null && j.placarB !== undefined);
+  return jogosValidos.filter((j) => (time === TIME_A ? j.placarB : j.placarA) === 0).length;
+}
+
+// Template HTML Unificado com carcaça/efeito metálico do CARDS + dados do Bests League
+function templateFifaCardHtml(dados) {
+  const {
+    nome, overall, gols, media = 0, amarelos = 0, vermelhos = 0, craques = 0, jogos = 0,
+    grande, isLenda, textoTime, corTime, souCapitao, foto, souArtilheiro, souMaiorCraque,
+    titulos = 0, indice,
+    statSecundarioValor, statSecundarioLabel,
+  } = dados;
   const ov = overall || 3;
-  const rar = raridade(ov);
+  const rar = isLenda ? "lenda" : raridade(ov);
   const cor = CARD_COR_TEXTO[rar];
   const bg = CARD_BG[rar];
   const tam = grande ? "bl-fcard-grande" : "";
-  const clicavel = grande ? "" : `data-perfil-jogador="${escapeHtml(nome.replace(/🏆.*/, '').trim())}"`;
+  const clicavel = grande ? "" : `data-perfil-jogador="${escapeHtml(nome.trim())}"`;
+  const atraso = typeof indice === "number" ? `style="--fcard-cor:${cor}; background:${bg}; --fcard-atraso:${(indice % 8) * 0.06}s;"` : `style="--fcard-cor:${cor}; background:${bg};"`;
+
+  const valorSecundario = statSecundarioValor !== undefined ? statSecundarioValor : media;
+  const labelSecundario = statSecundarioLabel || "Média";
+
+  // 1. Zera a badge antiga de texto no meio do card
+  const tituloBadgeHtml = ""; 
+
+  // 2. Cria a tag do novo selo circular
+  const badgeCampeaoHtml = titulos > 0 ? `
+    <span class="fut-card-badge fut-card-campeao" title="${titulos}x Campeão">
+      🏆<span class="badge-count">${titulos}</span>
+    </span>
+  ` : "";
 
   const AtributosLayoutHtml = isLenda ? `
-    <div class="player-features" style="justify-content: center; gap: 24px; margin-top: 6px;">
-      <div class="player-features-col" style="border: none; align-items: center;">
-        <span style="flex-direction: column; gap: 1px;">
-          <span class="player-feature-value" style="font-size: 1.15rem; color: #FFF;">${gols}</span>
-          <span class="player-feature-title" style="font-size: 0.65rem; text-align: center; color: var(--bl-gold-light);">GOLS</span>
+    <div class="player-features" style="justify-content: center; gap: 8px; margin-top: 8px;">
+      <div class="player-features-col" style="border: none; align-items: center; padding: 0;">
+        <span style="flex-direction: column; gap: 0px;">
+          <span class="player-feature-value" style="font-size: 1.15rem;">${jogos}</span>
+          <span class="player-feature-title" style="font-size: 0.65rem; text-align: center;">JOGOS</span>
         </span>
       </div>
       <div class="player-features-col" style="border: none; align-items: center; padding: 0;">
-        <span style="flex-direction: column; gap: 1px;">
-          <span class="player-feature-value" style="font-size: 1.15rem; color: #FFF;">${jogos}</span>
-          <span class="player-feature-title" style="font-size: 0.65rem; text-align: center; color: #A0AEC0;">JOGOS</span>
+        <span style="flex-direction: column; gap: 0px;">
+          <span class="player-feature-value" style="font-size: 1.15rem;">${gols}</span>
+          <span class="player-feature-title" style="font-size: 0.65rem; text-align: center;">GOLS</span>
+        </span>
+      </div>
+      <div class="player-features-col" style="border: none; align-items: center; padding: 0;">
+        <span style="flex-direction: column; gap: 0px;">
+          <span class="player-feature-value" style="font-size: 1.15rem;">${craques}</span>
+          <span class="player-feature-title" style="font-size: 0.65rem; text-align: center;">⭐ MVP</span>
         </span>
       </div>
     </div>
@@ -343,7 +521,7 @@ function templateFifaCardHtml(nome, overall, gols, media, amarelos, vermelhos, c
     <div class="player-features">
       <div class="player-features-col">
         <span><span class="player-feature-value">${gols}</span><span class="player-feature-title">Gols</span></span>
-        <span><span class="player-feature-value">${media}</span><span class="player-feature-title">Média</span></span>
+        <span><span class="player-feature-value">${valorSecundario}</span><span class="player-feature-title">${escapeHtml(labelSecundario)}</span></span>
         <span><span class="player-feature-value">${amarelos}</span><span class="player-feature-title">Amar.</span></span>
       </div>
       <div class="player-features-col">
@@ -354,27 +532,39 @@ function templateFifaCardHtml(nome, overall, gols, media, amarelos, vermelhos, c
     </div>
   `;
 
+  const fotoHtml = foto
+    ? `<img class="player-photo-real" src="${escapeHtml(foto)}" alt="${escapeHtml(nome)}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />`
+    : "";
+  const silhuetaEscondida = foto ? `style="display:none;"` : "";
+
   return `
-    <div class="fut-player-card ${tam}" ${clicavel} style="--fcard-cor:${cor}; background:${bg};">
-      <div class="player-card-top">
+    <div class="fut-player-card ${tam}" data-rarity="${rar}" ${clicavel} ${atraso}>
+      <div class="fut-card-shine"></div>
+      <div class="player-photo-zone">
+        ${fotoHtml}
+        <div class="player-silhouette" ${silhuetaEscondida}>
+          <svg viewBox="0 0 80 90" fill="none">
+            <ellipse cx="40" cy="26" rx="16" ry="18" fill="${cor}" opacity="0.5"/>
+            <path d="M10 90 C10 60 70 60 70 90" fill="${cor}" opacity="0.5"/>
+          </svg>
+        </div>
+        <div class="player-photo-scrim"></div>
         <div class="player-master-info" style="color:${cor}">
           <div class="player-rating">${ov}</div>
-          <div class="player-position">${escapeHtml(textoTime.substring(0, 5))}</div>
           <div class="player-stars">${starsSmall(ov, cor)}</div>
+          <div class="player-team-dot" style="background:${corTime || cor};" title="Cor do time"></div>
         </div>
-        <div class="player-picture">
-          <div class="player-silhouette">
-            <svg viewBox="0 0 80 90" fill="none">
-              <ellipse cx="40" cy="26" rx="16" ry="18" fill="${cor}" opacity="0.5"/>
-              <path d="M10 90 C10 60 70 60 70 90" fill="${cor}" opacity="0.5"/>
-            </svg>
-          </div>
+        <div class="fut-card-badges">
+          ${badgeCampeaoHtml}
+          ${souMaiorCraque ? `<span class="fut-card-badge fut-card-maiorcraque" title="Maior craque do jogo">🏅</span>` : ""}
+          ${souArtilheiro ? `<span class="fut-card-badge fut-card-artilheiro" title="Artilheiro">⚽</span>` : ""}
+          ${souCapitao ? `<span class="fut-card-capitao" title="Capitão do time">C</span>` : ""}
         </div>
       </div>
-      <div class="player-card-top-glow"></div>
       <div class="player-card-bottom">
         <div class="player-info" style="color:${cor}">
           <div class="player-name"><span>${escapeHtml(nome)}</span></div>
+          ${tituloBadgeHtml}
           ${AtributosLayoutHtml}
         </div>
       </div>
@@ -386,6 +576,39 @@ function starsSmall(overall, cor) {
   let h = "";
   for (let i = 1; i <= 5; i++) { h += `<span style="color:${i <= overall ? cor : "rgba(255,255,255,0.2)"};font-size:10px;">★</span>`; }
   return h;
+}
+
+// ============================================================
+// EFEITO TILT 3D (EXTRAÍDO DO PROJETO CARDS)
+// ============================================================
+function initFutCardTilt() {
+  return
+  if (!window.matchMedia) return;
+  if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  document.addEventListener("mousemove", (e) => {
+    const card = e.target.closest && e.target.closest(".fut-player-card");
+    if (!card || card.classList.contains("bl-fcard-grande")) return;
+    const rect = card.getBoundingClientRect();
+    const px = (e.clientX - rect.left) / rect.width;
+    const py = (e.clientY - rect.top) / rect.height;
+    const ry = (px - 0.5) * 16;
+    const rx = (0.5 - py) * 16;
+    card.style.transition = "transform 0.05s linear, box-shadow 0.2s ease";
+    card.style.setProperty("--ry", ry.toFixed(2) + "deg");
+    card.style.setProperty("--rx", rx.toFixed(2) + "deg");
+  });
+
+  document.addEventListener("mouseout", (e) => {
+    const card = e.target.closest && e.target.closest(".fut-player-card");
+    if (!card) return;
+    const indoPara = e.relatedTarget && e.relatedTarget.closest ? e.relatedTarget.closest(".fut-player-card") : null;
+    if (indoPara !== card) {
+      card.style.setProperty("--ry", "0deg");
+      card.style.setProperty("--rx", "0deg");
+    }
+  });
 }
 
 function renderPerfilJogador(nomeJogador) {
@@ -408,8 +631,6 @@ function renderPerfilJogador(nomeJogador) {
     const tJogadores = t.jogadores || [];
     const noElenco = tJogadores.some(p => p.nome === nomeJogador);
     
-    // 🌟 CORRIGIDO: Só entra no histórico se ele estiver no elenco, ou tiver gols, ou tiver sido craque!
-    // Se ele foi apagado e está zerado, o sistema ignora esse turno automaticamente.
     if (noElenco || stats.gols > 0 || stats.craques > 0) {
       historicoSeasons.push({
         nomeTemporada: t.nome,
@@ -465,14 +686,40 @@ function renderPerfilJogador(nomeJogador) {
   }
 
   const esLendaCard = subTabJogadores === "lendas";
+  const lendaEncontrada = esLendaCard ? calcularLendasdaPelada().find(p => p.nome === nomeJogador) : null;
+  let cardHtml;
+  if (esLendaCard && lendaEncontrada) {
+    const lendasOrdenadas = calcularLendasdaPelada();
+    const artilheiroLendas = lendasOrdenadas[0];
+    const craqueLendas = [...lendasOrdenadas].sort((a, b) => (b.craques || 0) - (a.craques || 0))[0];
+    
+    cardHtml = templateFifaCardHtml({
+      nome: j.nome,
+      overall: j.overall,
+      gols: lendaEncontrada.gols || 0,
+      jogos: lendaEncontrada.jogosDisputados || 0,
+      craques: lendaEncontrada.craques || 0,
+      grande: true,
+      isLenda: true,
+      textoTime: "LNDA",
+      titulos: lendaEncontrada.titulos || 0,
+      souCapitao: legendaEhCapitaoAtual(j.nome),
+      foto: buscarFotoPorNome(j.nome),
+      souArtilheiro: !!(artilheiroLendas && artilheiroLendas.gols > 0 && j.nome === artilheiroLendas.nome),
+      souMaiorCraque: !!(craqueLendas && craqueLendas.craques > 0 && j.nome === craqueLendas.nome),
+    });
+  } else {
+    cardHtml = renderFifaCard(temp, j, true);
+  }
+
   return `
     <button type="button" class="bl-btn-voltar" id="btnVoltarElenco">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 5"></polyline></svg>
       Voltar para o elenco
     </button>
     <div class="bl-perfil-container">
       <div class="bl-perfil-wrap">
-        ${esLendaCard ? templateFifaCardHtml(j.nome, j.overall, calcularLendasdaPelada().find(p => p.nome === nomeJogador)?.gols || 0, 0, 0, 0, 0, calcularLendasdaPelada().find(p => p.nome === nomeJogador)?.jogosDisputados || 0, true, true, "LNDA") : renderFifaCard(temp, j, true)}
+        ${cardHtml}
       </div>
       ${secaoHistoricoHtml}
     </div>
@@ -514,6 +761,16 @@ function attachTabContentListeners() {
   const btnSubLendas = document.getElementById("btnSubTabLendas");
   if (btnSubTemporada) btnSubTemporada.addEventListener("click", () => { subTabJogadores = "temporada"; renderTabContentOnly(); });
   if (btnSubLendas) btnSubLendas.addEventListener("click", () => { subTabJogadores = "lendas"; renderTabContentOnly(); });
+
+  document.querySelectorAll("[data-ranking-modo]").forEach((el) => {
+    el.addEventListener("click", () => {
+      rankingModoAno = el.getAttribute("data-ranking-modo") === "ano";
+      if (typeof animarContadoresEm !== "function") { renderTabContentOnly(); return; }
+      renderTabContentOnly();
+      const container = document.getElementById("tabContent");
+      if (container) animarContadoresEm(container);
+    });
+  });
 }
 
 function renderTabContentOnly() {
@@ -524,11 +781,12 @@ function renderTabContentOnly() {
   if (currentTab === "inicio") {
     container.innerHTML = ehArquivada ? gerarHtmlHallOfFameInline(temp) : window.renderInicio();
     if (ehArquivada) initFameDragScroll(); 
+    if (typeof animarContadoresEm === "function") animarContadoresEm(container);
   }
   else if (currentTab === "calendario") container.innerHTML = window.renderCalendario();
-  else if (currentTab === "artilharia") container.innerHTML = window.renderArtilharia();
+  else if (currentTab === "artilharia") { container.innerHTML = window.renderArtilharia(); if (typeof animarContadoresEm === "function") animarContadoresEm(container); }
   else if (currentTab === "disciplina") container.innerHTML = window.renderDisciplina();
-  else if (currentTab === "craques") container.innerHTML = window.renderCraques();
+  else if (currentTab === "craques") { container.innerHTML = window.renderCraques(); if (typeof animarContadoresEm === "function") animarContadoresEm(container); }
   else if (currentTab === "jogadores") container.innerHTML = renderJogadoresTab();
   
   attachTabContentListeners();
@@ -543,7 +801,6 @@ function renderAll() {
   const temp = temporadaVisualizada();
   const ehArquivada = temp && (temp.arquivadaEm || temp.nome.toLowerCase().includes("arquivada"));
 
-  // Garante o cálculo e a pintura dos dados corretos no painel superior
   window.renderConfrontoBar();
 
   if (ehArquivada) {
@@ -554,6 +811,7 @@ function renderAll() {
     if (container) {
       container.innerHTML = gerarHtmlHallOfFameInline(temp);
       initFameDragScroll();
+      if (typeof animarContadoresEm === "function") animarContadoresEm(container);
     }
     attachTabContentListeners();
   } else {

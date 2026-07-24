@@ -97,7 +97,6 @@
   height: 3px;
   background: linear-gradient(90deg, var(--bl-timeA), var(--bl-gold), var(--bl-timeB));
 }
-.bl-scoreboard-hero { padding: 30px 32px; }
 .bl-scoreboard-date {
   text-align: center;
   font-size: 11px;
@@ -151,6 +150,217 @@
 
 .bl-crest { border-radius: 50%; display: inline-block; flex-shrink: 0; box-shadow: 0 0 0 1px rgba(255,255,255,0.12); }
 
+/* ============================================================
+   HERO — CONFRONTO ESTILO "CARA A CARA" (UFC)
+   Capitão do time B no canto superior direito, capitão do time A
+   no canto inferior esquerdo, placar ampliado no centro. A foto de
+   cada capitão (quando existe) vira o background transparente do
+   lado do seu time, por trás do degradê de cor — não é mais avatar.
+   ============================================================ */
+.bl-ufc-hero {
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px;
+  min-height: 400px;
+  padding: 50px 42px 42px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(160deg, #16161a, #08080a 75%);
+  border: 1px solid var(--bl-line-strong);
+  box-shadow: 0 0 0 1px rgba(212,175,55,0.14), inset 0 0 60px rgba(212,175,55,0.03), 0 24px 60px rgba(0,0,0,0.55);
+  animation: blHeroFadeIn 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes blHeroFadeIn {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: scale(1); }
+}
+.bl-ufc-hero::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--corA), var(--bl-gold), var(--corB));
+  z-index: 4;
+}
+
+/* Foto do capitão como pano de fundo do lado do seu time — painel bem
+   visível (não é mais um fiapo transparente), ancorado no canto certo,
+   com fade suave em direção ao centro pra misturar com o degradê de cor.
+   Painel proporcional (não a largura toda) pra foto não esticar/dar zoom. */
+.bl-ufc-photobg {
+  position: absolute;
+  width: 52%;
+  height: 88%;
+  background-size: cover;
+  background-repeat: no-repeat;
+  opacity: 0.62;
+  filter: grayscale(0.3) contrast(1.06) brightness(0.94);
+}
+
+.bl-ufc-photobg-a {
+  left: 0;
+  bottom: 0;
+  background-position: center 10% !important;
+  -webkit-mask-image: linear-gradient(to bottom, #000 50%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 50%, transparent 100%);
+}
+
+.bl-ufc-photobg-b {
+  right: 0;
+  bottom: 0;
+  background-position: center 10% !important;
+  -webkit-mask-image: linear-gradient(to bottom, #000 50%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 50%, transparent 100%);
+}
+
+.bl-perfil-wrap img, 
+.bl-fifa-card-img img,
+.bl-avatar-edit-btn img {
+  object-position: center 15% !important;
+}
+.bl-ufc-photobg
+.bl-ufc-wash { position: absolute; inset: 0; pointer-events: none; }
+.bl-ufc-wash-a { background: radial-gradient(ellipse 70% 60% at 4% 96%, var(--corA), transparent 70%); opacity: 0.3; }
+.bl-ufc-wash-b { background: radial-gradient(ellipse 70% 60% at 96% 4%, var(--corB), transparent 70%); opacity: 0.3; }
+.bl-ufc-vinheta {
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(0,0,0,0.5) 0%, transparent 26%, transparent 74%, rgba(0,0,0,0.56) 100%),
+    radial-gradient(ellipse 55% 50% at 50% 46%, transparent 42%, rgba(0,0,0,0.4) 100%);
+}
+
+.bl-ufc-topline {
+  position: relative; z-index: 2;
+  font-size: 11.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--bl-text-faint);
+  margin-bottom: 26px;
+  text-align: center;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.6);
+}
+
+.bl-ufc-center { position: relative; z-index: 2; display: flex; align-items: center; justify-content: center; gap: 34px; }
+
+.bl-ufc-teamname {
+  display: flex; flex-direction: column; align-items: center; gap: 9px;
+  font-family: 'Oswald', sans-serif;
+  font-weight: 300;
+  font-size: 15px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--bl-text-dim);
+  text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+}
+
+.bl-ufc-teamname span { 
+  max-width: auto; 
+  overflow: hidden; 
+  text-overflow: ellipsis; 
+  white-space: nowrap; 
+  background: rgba(36, 36, 36, 0.6); 
+  padding: 6px 14px; 
+  border-radius: 20px;
+}
+
+.bl-ufc-teamname-a span {
+  border: 1px solid var(--corA);
+}
+
+.bl-ufc-teamname-b span {
+  border: 1px solid var(--corB);
+}
+
+.bl-ufc-score { display: flex; align-items: center; gap: 22px; }
+.bl-ufc-led { font-size: 86px; min-width: 86px; animation: blLedPop 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) 0.35s both; }
+.bl-ufc-vs {
+  font-family: 'Oswald', sans-serif;
+  font-weight: 700;
+  font-size: 19px;
+  letter-spacing: 0.06em;
+  color: var(--bl-gold);
+  opacity: 0.75;
+  animation: blVsPulse 2.4s ease-in-out infinite;
+}
+@keyframes blLedPop {
+  from { opacity: 0; transform: scale(0.55); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes blVsPulse {
+  0%, 100% { opacity: 0.65; text-shadow: 0 0 6px rgba(212,175,55,0.25); }
+  50% { opacity: 1; text-shadow: 0 0 16px rgba(212,175,55,0.6); }
+}
+@keyframes respiracao {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+.bl-ufc-fighter {
+  position: absolute; z-index: 3;
+}
+.bl-ufc-fighter-a { left: 30px; bottom: 26px; animation: blFighterInA 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both; }
+.bl-ufc-fighter-b { right: 30px; top: 26px; animation: blFighterInB 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both; }
+@keyframes blFighterInA {
+  from { opacity: 0; transform: translate(-20px, 14px); }
+  to { opacity: 1; transform: translate(0, 0); }
+}
+@keyframes blFighterInB {
+  from { opacity: 0; transform: translate(20px, -14px); }
+  to { opacity: 1; transform: translate(0, 0); }
+}
+.bl-ufc-fighter-info { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.bl-ufc-fighter-a .bl-ufc-fighter-info { align-items: flex-start; text-align: left; }
+.bl-ufc-fighter-b .bl-ufc-fighter-info { align-items: flex-end; text-align: right; }
+.bl-ufc-fighter-tag {
+  font-family: 'Oswald', sans-serif;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--bl-gold-light);
+  text-shadow: 0 1px 4px rgba(0,0,0,0.7);
+}
+.bl-ufc-fighter-nome {
+  font-family: 'Oswald', sans-serif;
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: #fff;
+  max-width: 190px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.75);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bl-ufc-hero, .bl-ufc-fighter-a, .bl-ufc-fighter-b, .bl-ufc-led, .bl-ufc-vs {
+    animation: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .bl-ufc-hero { min-height: 340px; padding: 36px 20px 30px; border-radius: 12px; }
+  .bl-ufc-led { font-size: 62px; min-width: 62px; }
+  .bl-ufc-center { gap: 20px; }
+  .bl-ufc-teamname { width: 78px; font-size: 12px; }
+  .bl-ufc-fighter-a { left: 16px; bottom: 18px; }
+  .bl-ufc-fighter-b { right: 16px; top: 18px; }
+  .bl-ufc-fighter-nome { max-width: 130px; font-size: 16px; }
+}
+
+@media (max-width: 480px) {
+  .bl-ufc-hero { min-height: 300px; padding: 30px 12px 24px; }
+  .bl-ufc-led { font-size: 46px; min-width: 46px; }
+  .bl-ufc-vs { font-size: 15px; }
+  .bl-ufc-center { gap: 12px; }
+  .bl-ufc-teamname { width: 60px; font-size: 9.5px; gap: 5px; }
+  .bl-ufc-fighter-a { left: 10px; bottom: 12px; }
+  .bl-ufc-fighter-b { right: 10px; top: 12px; }
+  .bl-ufc-fighter-nome { max-width: 96px; font-size: 13px; }
+  .bl-ufc-fighter-tag { font-size: 8.5px; letter-spacing: 0.12em; }
+}
+
 /* CONFRONTO BAR */
 .bl-confronto-bar {
   display: flex;
@@ -198,12 +408,26 @@
   cursor: pointer;
   white-space: nowrap;
   border-bottom: 2px solid transparent;
-  transition: color 0.15s ease, background 0.15s ease;
+  transition: color 0.15s ease, background 0.15s ease, border-color 0.2s ease;
   margin-bottom: -1px;
 }
 .bl-tab:hover { color: var(--bl-text); background: rgba(255,255,255,0.03); }
 .bl-tab-active { color: var(--bl-gold-light); border-bottom-color: var(--bl-gold); }
 .bl-tab-jogadores { margin-left: auto; color: var(--bl-azul-claro); }
+
+/* Todo conteúdo de aba entra com um fade + leve deslize pra cima —
+   como o innerHTML é substituído a cada troca, os elementos são
+   sempre novos no DOM e a animação replica normalmente sozinha. */
+#tabContent > * {
+  animation: blTabFadeIn 0.38s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes blTabFadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  #tabContent > * { animation: none; }
+}
 
 /* Esconde as barras de rolagem nativas das abas no mobile, mantendo o deslize */
 .bl-tabs {
@@ -309,6 +533,80 @@
   color: var(--bl-gold-light) !important;
   font-weight: 700 !important;
 }
+
+/* ============================================================
+   EFEITOS CINEMATOGRÁFICOS DO CONFRONTO (TRANSMISSÃO)
+   ============================================================ */
+
+/* 1. Zoom Infinito e Lento nos Jogadores (1% a 2% em 20s) */
+@keyframes zoomInfinito {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.03); }
+}
+
+.bl-ufc-photobg {
+  animation: zoomInfinito 20s infinite alternate ease-in-out, respiracao 6s infinite ease-in-out !important;
+  filter: drop-shadow(0px 10px 20px rgba(0,0,0,0.9)) grayscale(0.2);
+}
+
+/* 2. Entrada Dramática: Fade -> Placar sobe -> VS por último */
+.bl-ufc-score-wrapper {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: placarSobe 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.4s forwards;
+}
+@keyframes placarSobe {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.bl-ufc-vs {
+  opacity: 0;
+  animation: vsAparece 0.8s ease-in-out 1.2s forwards, blVsPulse 2.4s ease-in-out 2s infinite !important;
+}
+@keyframes vsAparece {
+  to { opacity: 1; }
+}
+
+/* 3. Lógica Visual de Vitória / Derrota (Glow e Apagar) */
+/* Quando o time A ganha */
+.bl-ufc-hero.vencedor-a {
+  box-shadow: inset 120px 0 100px -40px rgba(255, 255, 255, 0.15), 0 24px 60px rgba(0,0,0,0.55);
+}
+.bl-ufc-hero.vencedor-a .bl-ufc-photobg-a {
+  filter: grayscale(0.1) contrast(1.1) brightness(1.1); /* Brilha */
+}
+.bl-ufc-hero.vencedor-a .bl-ufc-photobg-b {
+  filter: grayscale(0.9) contrast(1.2) brightness(0.3); /* Apaga o perdedor */
+  opacity: 0.3;
+}
+
+/* Quando o time B ganha */
+.bl-ufc-hero.vencedor-b {
+  box-shadow: inset -120px 0 100px -40px rgba(255, 255, 255, 0.15), 0 24px 60px rgba(0,0,0,0.55);
+}
+.bl-ufc-hero.vencedor-b .bl-ufc-photobg-b {
+  filter: grayscale(0.1) contrast(1.1) brightness(1.1);
+}
+.bl-ufc-hero.vencedor-b .bl-ufc-photobg-a {
+  filter: grayscale(0.9) contrast(1.2) brightness(0.3);
+  opacity: 0.3;
+}
+
+/* Forma Recente (Últimos Jogos 🟢🔴🟢) */
+.bl-forma-recente {
+  display: flex;
+  gap: 4px;
+  margin-top: 8px;
+}
+.bl-bolinha-forma {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+.bl-bolinha-v { background-color: #22c55e; } /* Verde - Vitória */
+.bl-bolinha-e { background-color: #94a3b8; } /* Cinza - Empate */
+.bl-bolinha-d { background-color: #ef4444; } /* Vermelho - Derrota */
 
 /* ============================================================
    BESTS LEAGUE — Footer Minimalista r0b3rt
@@ -618,3 +916,175 @@
 .bl-stat-valor { font-family: 'Impact', sans-serif; font-size: 2.4rem; color: #FFF; line-height: 1; }
 .bl-stat-label { font-size: 0.75rem; color: #888; text-transform: uppercase; margin-top: 8px; }
 .bl-empates-pill { background: #2a2a2a; padding: 12px 28px; border-radius: 12px; text-align: center; margin: 0 20px; }
+
+/* ============================================================
+   HERO UFC PREMIUM - CINEMATIC EDITION (Ultrawide)
+   Substitua todo o bloco do Hero anterior no seu layout.css por este.
+   ============================================================ */
+
+.bl-ufc-hero {
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px;
+  min-height: 280px; /* Aspecto Ultrawide (Banner), reduzindo aquele caixote */
+  padding: 30px 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  
+  /* Borda Premium com Degradê (Sem gambiarras de ::before) */
+  border: 2px solid transparent;
+  background: 
+    linear-gradient(#050508, #050508) padding-box, 
+    linear-gradient(90deg, var(--corA), var(--corB)) border-box;
+    
+  /* Aura de luz saindo do card para o fundo da tela (O "Glow" externo) */
+  box-shadow: 
+    -60px 0 100px -60px var(--corA), 
+    60px 0 100px -60px var(--corB),
+    0 24px 60px rgba(0,0,0,0.8);
+    
+  animation: blHeroFadeIn 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Zera qualquer before antigo que estivesse rodando as animações ruins */
+.bl-ufc-hero::before { display: none; }
+
+/* ============================================================
+   FOTOS E MÁSCARAS (CORREÇÃO DA ESTRUTURA COM TAG <img>)
+   ============================================================ */
+
+/* 1. O Container agora assume a largura, posicionamento e a máscara */
+.bl-ufc-photobg-container {
+  display: none !important; /* Esconde as fotos temporariamente */
+  position: absolute;
+  width: 45%;
+  height: 100%;
+  top: 0;
+  z-index: 1;
+}
+
+.bl-ufc-photobg-a-container {
+  left: 0;
+  -webkit-mask-image: linear-gradient(to right, #000 35%, transparent 95%), linear-gradient(to bottom, #000 50%, transparent 95%);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(to right, #000 35%, transparent 95%), linear-gradient(to bottom, #000 50%, transparent 95%);
+  mask-composite: intersect;
+}
+
+.bl-ufc-photobg-b-container {
+  right: 0;
+  -webkit-mask-image: linear-gradient(to left, #000 35%, transparent 95%), linear-gradient(to bottom, #000 50%, transparent 95%);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(to left, #000 35%, transparent 95%), linear-gradient(to bottom, #000 50%, transparent 95%);
+  mask-composite: intersect;
+}
+
+/* 2. A imagem (<img>) preenche o container sem distorcer e aplica o shadow */
+.bl-ufc-photobg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* ESSENCIAL: Impede que a foto estique/esmague */
+  object-position: top center;
+  opacity: 0.85;
+  
+  /* Filtro cinematográfico + o seu Drop Shadow usando a variável de cor do JS */
+  filter: grayscale(0.2) contrast(1.1) brightness(0.9) drop-shadow(0 0 12px var(--team-color));
+}
+
+/* ============================================================
+   ATMOSFERA, LUZ E PARTÍCULAS
+   ============================================================ */
+.bl-ufc-wash {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  /* Partículas (faíscas) animadas subindo no fundo */
+  background-size: 100% 200%;
+  animation: blParticulas 8s linear infinite;
+}
+
+@keyframes blParticulas {
+  0% { background-position: 0% 100%; }
+  100% { background-position: 0% 0%; }
+}
+
+/* Brilho interno projetado sobre os ombros dos jogadores */
+.bl-ufc-wash-a { box-shadow: inset 180px 0 150px -100px var(--corA); opacity: 0.4; }
+.bl-ufc-wash-b { box-shadow: inset -180px 0 150px -100px var(--corB); opacity: 0.4; }
+
+/* ============================================================
+   TAGS NEON (Nomes dos Times embaixo do Placar)
+   ============================================================ */
+.bl-ufc-teamname span { 
+  background: transparent !important; /* Remove aquele fundo cinza chapado */
+  padding: 4px 18px; 
+  border-radius: 30px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  font-size: 11.5px;
+}
+
+/* Efeito Glow Tubo Neon */
+.bl-ufc-teamname-a span {
+  border: 1px solid var(--corA) !important;
+  color: var(--corA) !important;
+  box-shadow: 0 0 12px rgba(0,0,0,0.5), inset 0 0 8px var(--corA);
+  text-shadow: 0 0 8px var(--corA);
+}
+
+.bl-ufc-teamname-b span {
+  border: 1px solid var(--corB) !important;
+  color: var(--corB) !important;
+  box-shadow: 0 0 12px rgba(0,0,0,0.5), inset 0 0 8px var(--corB);
+  text-shadow: 0 0 8px var(--corB);
+}
+
+/* ============================================================
+   LÓGICA DE VITÓRIA / DERROTA (Ajustada para focar na imagem)
+   ============================================================ */
+.bl-ufc-hero.vencedor-a .bl-ufc-photobg-a { filter: grayscale(0) contrast(1.15) brightness(1.1) drop-shadow(0 0 18px var(--team-color)); }
+.bl-ufc-hero.vencedor-a .bl-ufc-photobg-b-container { filter: grayscale(1) contrast(1.2) brightness(0.2); opacity: 0.2; }
+
+.bl-ufc-hero.vencedor-b .bl-ufc-photobg-b { filter: grayscale(0) contrast(1.15) brightness(1.1) drop-shadow(0 0 18px var(--team-color)); }
+.bl-ufc-hero.vencedor-b .bl-ufc-photobg-a-container { filter: grayscale(1) contrast(1.2) brightness(0.2); opacity: 0.2; }
+
+
+/* ============================================================
+   RESPONSIVIDADE (MOBILE & TABLETS)
+   ============================================================ */
+@media (max-width: 768px) {
+  /* Reduz o caixote e dá fôlego cortando o padding lateral excessivo */
+  .bl-ufc-hero {
+    min-height: 240px; 
+    padding: 24px 16px; 
+  }
+
+  /* Aproxima o placar e reduz a fonte */
+  .bl-ufc-center { gap: 14px; }
+  .bl-ufc-led { font-size: 58px; min-width: 58px; }
+  
+  /* Reduz a largura dos capitães para não cobrirem o placar */
+  .bl-ufc-photobg-container { width: 40%; }
+  
+  /* Ajusta as tags dos capitães nas extremidades */
+  .bl-ufc-fighter-a { left: 12px; bottom: 16px; }
+  .bl-ufc-fighter-b { right: 12px; top: 16px; }
+  .bl-ufc-fighter-nome { font-size: 16px; max-width: 120px; }
+  
+  /* Diminui os botões neon dos times */
+  .bl-ufc-teamname span { font-size: 9.5px; padding: 4px 12px; }
+}
+
+@media (max-width: 480px) {
+  /* Celulares pequenos: recuo total das fotos e placar priorizado */
+  .bl-ufc-led { font-size: 46px; min-width: 42px; }
+  .bl-ufc-center { gap: 20px; }
+  
+  .bl-ufc-photobg-container { width: 38%; }
+  
+  .bl-ufc-fighter-nome { font-size: 14px; max-width: 100px; }
+  .bl-ufc-fighter-tag { font-size: 9px; }
+}

@@ -8,7 +8,7 @@
 let jogoFormState = null;
 
 function blankJogoForm() {
-  return { id: null, date: "", time: "21:00", placarA: 0, placarB: 0, craque: "", gols: [], cartoes: [] };
+  return { id: null, date: "", time: "21:00", placarA: "", placarB: "", craque: "", gols: [], cartoes: [] };
 }
 
 function optionsJogadoresHtml(temp, selected) {
@@ -33,6 +33,10 @@ function openJogoModal(jogoEditando) {
     showToast("Você estava vendo uma temporada arquivada. Voltei para a temporada atual.");
   }
   jogoFormState = jogoEditando ? { ...blankJogoForm(), ...jogoEditando } : blankJogoForm();
+  // Jogo agendado sem placar ainda (null) vira campo vazio no formulário,
+  // em vez de aparecer literalmente como "null" no input.
+  if (jogoFormState.placarA === null || jogoFormState.placarA === undefined) jogoFormState.placarA = "";
+  if (jogoFormState.placarB === null || jogoFormState.placarB === undefined) jogoFormState.placarB = "";
   renderJogoModal(!jogoEditando);
 }
 
@@ -73,11 +77,12 @@ function renderJogoModal(isNew) {
 
           <div class="bl-placar-edit">
             <div class="bl-placar-edit-team">${crestHtml(temp, TIME_A, 26)}<span>${escapeHtml(temp.timeA.nome)}</span></div>
-            <input type="number" min="0" class="bl-placar-input" id="fPlacarA" value="${f.placarA}" />
+            <input type="number" min="0" class="bl-placar-input" id="fPlacarA" value="${f.placarA}" placeholder="–" />
             <span class="bl-placar-edit-x">×</span>
-            <input type="number" min="0" class="bl-placar-input" id="fPlacarB" value="${f.placarB}" />
+            <input type="number" min="0" class="bl-placar-input" id="fPlacarB" value="${f.placarB}" placeholder="–" />
             <div class="bl-placar-edit-team">${crestHtml(temp, TIME_B, 26)}<span>${escapeHtml(temp.timeB.nome)}</span></div>
           </div>
+          <p class="bl-field-hint">deixe o placar em branco se o jogo ainda não aconteceu — só uma partida agendada</p>
           <div id="avisoGols">${mostraAviso ? `<p class="bl-hint bl-hint-warn">Gols lançados: ${ga} × ${gb} — confira se bate com o placar acima.</p>` : ""}</div>
 
           <div class="bl-section-divider">${iconGoalSmall()} Gols da partida</div>
@@ -185,12 +190,15 @@ function attachJogoModalListeners(isNew) {
     e.preventDefault();
     const date = document.getElementById("fJogoData").value;
     if (!date) return;
+    const valA = document.getElementById("fPlacarA").value;
+    const valB = document.getElementById("fPlacarB").value;
+    const aindaNaoJogado = valA === "" && valB === "";
     const jogo = {
       id: jogoFormState.id || uid("g"),
       date,
       time: document.getElementById("fJogoHorario").value,
-      placarA: Number(document.getElementById("fPlacarA").value),
-      placarB: Number(document.getElementById("fPlacarB").value),
+      placarA: aindaNaoJogado ? null : Number(valA || 0),
+      placarB: aindaNaoJogado ? null : Number(valB || 0),
       craque: document.getElementById("fCraque").value,
       gols: jogoFormState.gols,
       cartoes: jogoFormState.cartoes,
@@ -234,6 +242,10 @@ function handleSaveJogo(jogo, isNew) {
   const existe = temp.jogos.some((j) => j.id === jogo.id);
   if (existe) temp.jogos = temp.jogos.map((j) => (j.id === jogo.id ? jogo : j));
   else temp.jogos.push(jogo);
+
+  // Resultado lançado (ou jogo novo criado): garante que o PRÓXIMO jogo
+  // já esteja agendado, pra nunca ficar sem nada esperando na agenda.
+  if (typeof garantirProximoJogoAgendado === "function") garantirProximoJogoAgendado(temp);
   
   saveAppState(); 
   renderAll();
@@ -246,6 +258,7 @@ function handleDeleteJogo(id) {
   if (!temp.jogos) temp.jogos = [];
   
   temp.jogos = temp.jogos.filter((j) => j.id !== id);
+  if (typeof garantirProximoJogoAgendado === "function") garantirProximoJogoAgendado(temp);
   saveAppState();
   renderAll();
   showToast("Jogo removido");

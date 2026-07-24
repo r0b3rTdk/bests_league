@@ -9,12 +9,14 @@ function descobrirTimeCampeaoObjeto(temp) {
   }
 
   let vitA = 0, vitB = 0, emp = 0, gpA = 0, gcA = 0, gpB = 0, gcB = 0;
-  const jogosValidos = (temp.jogos || []).filter(j => j.placarA !== null && j.placarB !== null);
+  const jogosValidos = (temp.jogos || []).filter(j => j.placarA !== null && j.placarA !== undefined && j.placarB !== null && j.placarB !== undefined);
   
   jogosValidos.forEach(j => {
-    gpA += j.placarA; gcA += j.placarB; gpB += j.placarB; 
-    gcB += j.placarA; // Corrigido para evitar NaN
-    if (j.placarA > j.placarB) vitA++; else if (j.placarB > j.placarA) vitB++; else emp++;
+    const pA = Number(j.placarA) || 0;
+    const pB = Number(j.placarB) || 0;
+    gpA += pA; gcA += pB; gpB += pB;
+    gcB += pA; // Corrigido para evitar NaN
+    if (pA > pB) vitA++; else if (pB > pA) vitB++; else emp++;
   });
 
   const ptsA = (vitA * 3) + emp; ptsB = (vitB * 3) + emp;
@@ -49,7 +51,7 @@ function renderAll() {
       const timeCampeao = resCampeao.objeto;
       const detalhePenalties = temp.id === "temp_2025" ? `<p class="bl-champ-sub" style="color:#FFF; margin-top:4px; font-size:0.85rem;">Vencedor nos Pênaltis (3x1) ⚡</p>` : '';
       
-      const jogosValidos = (temp.jogos || []).filter(j => j.placarA !== null && j.placarB !== null);
+      const jogosValidos = (temp.jogos || []).filter(j => j.placarA !== null && j.placarA !== undefined && j.placarB !== null && j.placarB !== undefined);
       const totalJogos = jogosValidos.length;
       const cVitorias = resCampeao.ehTimeACampeao ? resCampeao.vitA : resCampeao.vitB;
       const cDerrotas = resCampeao.ehTimeACampeao ? (resCampeao.derA !== undefined ? resCampeao.derA : resCampeao.vitB) : (resCampeao.derB !== undefined ? resCampeao.derB : resCampeao.vitA);
@@ -99,6 +101,7 @@ function renderAll() {
     if (container) {
       container.innerHTML = gerarHtmlHallOfFameInline(temp);
       if (typeof initFameDragScroll === "function") initFameDragScroll();
+      if (typeof animarContadoresEm === "function") animarContadoresEm(container);
     }
   } else {
     if (confrontoBarTop) confrontoBarTop.style.display = "";
@@ -114,7 +117,7 @@ function renderAll() {
 
 function gerarHtmlHallOfFameInline(temp) {
   const res = descobrirTimeCampeaoObjeto(temp);
-  const jogosValidos = (temp.jogos || []).filter(j => j.placarA !== null && j.placarB !== null);
+  const jogosValidos = (temp.jogos || []).filter(j => j.placarA !== null && j.placarA !== undefined && j.placarB !== null && j.placarB !== undefined);
 
   let mapaGols = {}, mapaCraques = {};
 
@@ -235,7 +238,7 @@ function showToast(msg, isError) {
 function renderBlocoEstatisticas(temp) {
   const res = descobrirTimeCampeaoObjeto(temp);
   const jogosCronologicos = typeof jogosOrdenados === "function" ? jogosOrdenados(temp) : (temp.jogos || []);
-  const jogosValidos = jogosCronologicos.filter(j => j.placarA !== null && j.placarB !== null);
+  const jogosValidos = jogosCronologicos.filter(j => j.placarA !== null && j.placarA !== undefined && j.placarB !== null && j.placarB !== undefined);
   const totalJogos = jogosValidos.length;
   const ultimoJogo = totalJogos > 0 ? jogosValidos[totalJogos - 1] : null;
 
@@ -280,25 +283,25 @@ function renderBlocoEstatisticas(temp) {
       
       <div class="bl-estatisticas-grid-top">
         <div style="${estiloColA}">
-          <div class="bl-stat-valor">${res.vitA}</div>
+          <div class="bl-stat-valor" data-count-final="${res.vitA}">${res.vitA}</div>
           <div class="bl-stat-label">VITÓRIAS ${escapeHtml(temp.timeA.nome).toUpperCase()}</div>
         </div>
         
         <div style="${estiloEmpatePill}">
-          <div style="font-family:'Impact',sans-serif; font-size: 1.6rem; color: var(--bl-gold-light); line-height: 1;">${res.emp}</div>
+          <div style="font-family:'Impact',sans-serif; font-size: 1.6rem; color: var(--bl-gold-light); line-height: 1;" data-count-final="${res.emp}">${res.emp}</div>
           <div class="bl-stat-label" style="margin-top:5px; font-weight:600;">EMPATES</div>
         </div>
 
         <div style="${estiloColB}">
-          <div class="bl-stat-valor">${res.vitB}</div>
+          <div class="bl-stat-valor" data-count-final="${res.vitB}">${res.vitB}</div>
           <div class="bl-stat-label">VITÓRIAS ${escapeHtml(temp.timeB.nome).toUpperCase()}</div>
         </div>
       </div>
       
       <div class="bl-estatisticas-grid-bottom">
-        <div><div class="bl-stat-valor">${totalJogos}</div><div class="bl-stat-label">JOGOS DISPUTADOS</div></div>
-        <div><div class="bl-stat-valor">${res.gpA + res.gpB}</div><div class="bl-stat-label">GOLS NA TEMPORADA</div></div>
-        <div><div class="bl-stat-valor">${totalJogos > 0 ? ((res.gpA + res.gpB) / totalJogos).toFixed(1) : '0.0'}</div><div class="bl-stat-label">MÉDIA DE GOLS/JOGO</div></div>
+        <div><div class="bl-stat-valor" data-count-final="${totalJogos}">${totalJogos}</div><div class="bl-stat-label">JOGOS DISPUTADOS</div></div>
+        <div><div class="bl-stat-valor" data-count-final="${res.gpA + res.gpB}">${res.gpA + res.gpB}</div><div class="bl-stat-label">GOLS NA TEMPORADA</div></div>
+        <div><div class="bl-stat-valor" data-count-final="${totalJogos > 0 ? ((res.gpA + res.gpB) / totalJogos).toFixed(1) : '0.0'}">${totalJogos > 0 ? ((res.gpA + res.gpB) / totalJogos).toFixed(1) : '0.0'}</div><div class="bl-stat-label">MÉDIA DE GOLS/JOGO</div></div>
       </div>
     </div>
   `;

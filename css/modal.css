@@ -74,6 +74,43 @@
 .bl-jogador-row .bl-stars-edit { display: flex; gap: 2px; cursor: pointer; margin-left: 4px; }
 .bl-jogador-row .bl-stars-edit span { font-size: 16px; transition: color 0.1s; cursor: pointer; line-height: 1; }
 
+/* Botão de avatar/foto na linha do elenco */
+.bl-avatar-edit-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  flex-shrink: 0;
+  border-radius: 50%;
+  position: relative;
+  line-height: 0;
+}
+.bl-avatar-edit-btn:hover .bl-avatar { filter: brightness(1.25); }
+.bl-avatar-edit-btn::after {
+  content: '✎';
+  position: absolute; bottom: -2px; right: -2px;
+  width: 14px; height: 14px; border-radius: 50%;
+  background: var(--bl-bg-elev); border: 1px solid var(--bl-line-strong);
+  font-size: 8px; color: var(--bl-text-dim);
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* Botão "C" de capitão na linha do elenco */
+.bl-capitao-toggle {
+  font-family: 'Oswald', sans-serif;
+  font-weight: 800;
+  font-size: 12px;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--bl-line-strong);
+  flex-shrink: 0;
+}
+.bl-capitao-toggle.bl-capitao-ativo {
+  background: linear-gradient(135deg, var(--bl-gold-light), var(--bl-gold));
+  color: #1a1305;
+  border-color: var(--bl-gold);
+}
+
 /* Estilos para Edição Inline no Elenco */
 .bl-select-inline-time {
   background: rgba(255, 255, 255, 0.05);
@@ -112,6 +149,9 @@
 @media (max-width: 760px) {
   .bl-input-inline-nome { font-size: 12px; padding: 5px 4px; }
   .bl-select-inline-time { width: 50px; font-size: 10px; }
+  .bl-jogador-row { gap: 6px; }
+  .bl-avatar-edit-btn .bl-avatar { width: 24px !important; height: 24px !important; font-size: 11px !important; }
+  .bl-capitao-toggle { width: 24px; height: 24px; font-size: 11px; }
 }
 
 /* Layout Avançado de Formulário para Nova Temporada */

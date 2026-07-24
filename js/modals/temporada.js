@@ -11,7 +11,7 @@ function openNovaTemporadaModal() {
   const tempAtual = typeof temporadaEmAndamento === "function" ? temporadaEmAndamento() : null;
 
   // 🔹 SE HOUVER UMA TEMPORADA ATIVA COM JOGOS, MOSTRA O HALL OF FAME PRIMEIRO!
-  if (tempAtual && tempAtual.jogos && tempAtual.jogos.filter(j => j.placarA !== null).length > 0) {
+  if (tempAtual && tempAtual.jogos && tempAtual.jogos.filter(j => j.placarA !== null && j.placarA !== undefined).length > 0) {
     renderHallOfFameModal(tempAtual);
   } else {
     // Se não tiver temporada anterior ou não tiver jogos nela, vai direto pro form
@@ -26,7 +26,7 @@ function renderHallOfFameModal(temp) {
   let gpA = 0, gcA = 0, gpB = 0, gcB = 0;
   let mapaGols = {}, mapaCraques = {};
 
-  const jogosValidos = temp.jogos.filter(j => j.placarA !== null && j.placarB !== null);
+  const jogosValidos = temp.jogos.filter(j => j.placarA !== null && j.placarA !== undefined && j.placarB !== null && j.placarB !== undefined);
   const totalJogos = jogosValidos.length;
 
   jogosValidos.forEach(j => {
@@ -131,8 +131,8 @@ function renderHallOfFameModal(temp) {
           <!-- GRID DE CARDS DOS JOGADORES CAMPEÕES -->
           <h3 class="bl-section-title-fame">👥 Elenco Vitorioso</h3>
           <div class="bl-fifa-cards-grid-fame">
-            ${jogadoresCampeoes.map(j => {
-              if (typeof renderFifaCard === "function") return renderFifaCard(temp, j, false);
+            ${jogadoresCampeoes.map((j, i) => {
+              if (typeof renderFifaCard === "function") return renderFifaCard(temp, j, false, i);
               return `<div class="mini-player-name-fallback">${j.nome}</div>`;
             }).join("")}
           </div>
@@ -175,9 +175,25 @@ function renderFormNovaTemporadaHtml() {
         <div class="bl-modal-body">
           <form id="formNovaTemporada" class="bl-form-layout">
             
+            <div class="bl-form-row-2col">
+              <div class="bl-form-group">
+                <label>Ano</label>
+                <input type="number" id="newTempAno" placeholder="2027" required class="bl-input-grande" min="2020" max="2100" value="${new Date().getFullYear()}" />
+              </div>
+              <div class="bl-form-group">
+                <label>Turno</label>
+                <select id="newTempTurno" class="bl-input-grande">
+                  <option value="1">1º turno (6 meses)</option>
+                  <option value="2">2º turno (6 meses)</option>
+                  <option value="0">Ano inteiro (sem dividir)</option>
+                </select>
+              </div>
+            </div>
+
             <div class="bl-form-group">
               <label>Nome da Temporada</label>
               <input type="text" id="newTempNome" placeholder="Ex: TEMPORADA 2027" required class="bl-input-grande" />
+              <span class="bl-field-hint">Sugerido automaticamente a partir do ano/turno — pode editar à vontade.</span>
             </div>
 
             <div class="bl-form-row-2col">
@@ -265,10 +281,28 @@ function renderFormNovaTemporadaHtml() {
     });
   });
 
+  // Sugere o nome automaticamente a partir do ano/turno escolhidos —
+  // o campo de nome continua livre pra editar se quiser algo diferente.
+  function sugerirNomeTemporada() {
+    const campoNome = document.getElementById("newTempNome");
+    if (campoNome.dataset.editadoManualmente === "true") return;
+    const ano = document.getElementById("newTempAno").value;
+    const turno = document.getElementById("newTempTurno").value;
+    const sufixo = turno === "1" ? " — 1º Turno" : turno === "2" ? " — 2º Turno" : "";
+    campoNome.value = `TEMPORADA ${ano}${sufixo}`;
+  }
+  document.getElementById("newTempAno").addEventListener("input", sugerirNomeTemporada);
+  document.getElementById("newTempTurno").addEventListener("change", sugerirNomeTemporada);
+  document.getElementById("newTempNome").addEventListener("input", (e) => { e.target.dataset.editadoManualmente = "true"; });
+  sugerirNomeTemporada();
+
   // Listener Submit do Form
   document.getElementById("formNovaTemporada").addEventListener("submit", (e) => {
     e.preventDefault();
     const nome = document.getElementById("newTempNome").value.trim().toUpperCase();
+    const ano = Number(document.getElementById("newTempAno").value) || new Date().getFullYear();
+    const turnoValor = Number(document.getElementById("newTempTurno").value);
+    const turno = turnoValor === 1 || turnoValor === 2 ? turnoValor : null;
     const timeANome = document.getElementById("newTimeANome").value.trim().toUpperCase();
     const timeACor = document.getElementById("newTimeACor").value;
     const timeBNome = document.getElementById("newTimeBNome").value.trim().toUpperCase();
@@ -281,15 +315,19 @@ function renderFormNovaTemporadaHtml() {
     let novosJogadores = [];
     if (regraElenco === "manter" && tempAtual) {
       novosJogadores = tempAtual.jogadores.map(j => ({
-        id: j.id, nome: j.nome, time: "AVULSO", overall: regraEstrelas === "resetar" ? 3 : (j.overall || 3)
+        id: j.id, nome: j.nome, time: "AVULSO", overall: regraEstrelas === "resetar" ? 3 : (j.overall || 3), capitao: false, foto: j.foto || ""
       }));
     }
 
     const novaTemp = {
-      id: "temp_" + Date.now(), nome: nome,
+      id: "temp_" + Date.now(), nome: nome, ano, turno,
       timeA: { nome: timeANome, cor: timeACor }, timeB: { nome: timeBNome, cor: timeBCor },
       jogadores: novosJogadores, jogos: []
     };
+
+    // A temporada já nasce com o próximo jogo agendado, sem precisar
+    // cadastrar na mão antes da primeira pelada rolar.
+    const jogosAgendados = typeof garantirProximoJogoAgendado === "function" ? garantirProximoJogoAgendado(novaTemp) : 0;
 
     if (!appState.temporadas) appState.temporadas = [];
     appState.temporadas.push(novaTemp);
@@ -299,7 +337,7 @@ function renderFormNovaTemporadaHtml() {
     if (typeof initTemporadaSelect === "function") initTemporadaSelect(); 
     closeGenericModal();
     renderAll();
-    showToast(`Sucesso: ${nome} iniciada!`);
+    showToast(`Sucesso: ${nome} iniciada!${jogosAgendados > 0 ? " Próximo jogo já agendado." : ""}`);
   });
 
   const btnExcluir = document.getElementById("btnExcluirTemporadaAtual");
